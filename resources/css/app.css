@@ -1,0 +1,279 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* --- ESTILOS GLOBALES --- */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+a { 
+    text-decoration: none; 
+    color: inherit; 
+}
+
+.container { 
+    max-width: 1200px; 
+    margin: 0 auto; 
+    padding: 0 1.5rem; 
+}
+
+/* --- 1. PÁGINA DE PORTADA (LANDING) --- */
+body.landing-page {
+    background-color: #1a233a;
+    color: #f0f4f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+}
+
+.landing-page .hero-container { padding: 2rem; }
+.landing-page .hero-logo .fa-mobile-screen-button { font-size: 3rem; margin-bottom: 1rem; color: #d0d0d0; }
+.landing-page .hero-title { font-size: 4rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 0.5rem; }
+.landing-page .hero-subtitle { font-size: 1.25rem; font-weight: 300; color: #a0aec0; margin-bottom: 3rem; }
+.landing-page .features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 3rem; max-width: 900px; }
+.landing-page .feature-box { background-color: #2a3b5f; padding: 1.5rem 1rem; border-radius: 12px; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; font-size: 0.9rem; font-weight: 600; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.landing-page .feature-box:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); }
+.landing-page .feature-box .fa-solid { font-size: 1.5rem; }
+.landing-page .feature-box.box-1 { color: #d1d5db; }
+.landing-page .feature-box.box-2 { background-color: #2563eb; color: #ffffff; }
+.landing-page .feature-box.box-3 { background-color: #10b981; color: #ffffff; }
+.landing-page .feature-box.box-4 { background-color: #f59e0b; color: #ffffff; }
+.landing-page .cta-button { display: inline-block; background-color: #ffffff; color: #1a233a; font-size: 1.1rem; font-weight: 700; text-decoration: none; padding: 1rem 2.5rem; border-radius: 50px; margin-bottom: 2.5rem; transition: background-color 0.2s ease, color 0.2s ease; }
+.landing-page .cta-button:hover { background-color: #e0e0e0; }
+.landing-page .secondary-benefits { display: flex; justify-content: center; gap: 2rem; font-size: 0.85rem; color: #a0aec0; margin-bottom: 4rem; }
+.landing-page .benefit { display: flex; align-items: center; gap: 0.5rem; }
+
+/* --- 2. PÁGINA DE TIENDA (SHOP) --- */
+body.shop-page {
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+/* 2.1 Navbar (Tienda) */
+.shop-page .navbar { background-color: #ffffff; border-bottom: 1px solid #e9ecef; padding: 1rem 0; position: sticky; top: 0; z-index: 1000; }
+.shop-page .navbar-content { display: flex; justify-content: space-between; align-items: center; }
+.shop-page .nav-logo { display: flex; align-items: center; gap: 0.75rem; }
+.shop-page .nav-logo .fa-mobile-screen-button { font-size: 1.75rem; }
+.shop-page .nav-logo-text { display: flex; flex-direction: column; line-height: 1.2; }
+.shop-page .nav-logo-text strong { font-size: 1.1rem; font-weight: 700; }
+.shop-page .nav-logo-text span { font-size: 0.8rem; color: #6c757d; }
+.shop-page .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+.shop-page .nav-links a { font-size: 0.95rem; font-weight: 500; color: #495057; transition: color 0.2s; }
+.shop-page .nav-links a:hover { color: #0d6efd; }
+.shop-page .nav-links .btn-explore { background-color: #1a233a; color: #ffffff; padding: 0.6rem 1rem; border-radius: 8px; font-weight: 600; }
+.shop-page .search-bar { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 0.6rem 1rem; display: flex; align-items: center; gap: 0.5rem; width: 250px; }
+.shop-page .search-bar .fa-search { color: #6c757d; }
+.shop-page .search-bar input { border: none; background: none; outline: none; width: 100%; font-size: 0.9rem; }
+.shop-page .nav-icons { display: flex; align-items: center; gap: 1.5rem; font-size: 1.2rem; color: #495057; }
+.shop-page .nav-icons .fa-solid { cursor: pointer; transition: color 0.2s; }
+.shop-page .nav-icons .fa-solid:hover { color: #0d6efd; }
+.shop-page .user-dropdown { position: relative; }
+.shop-page .user-dropdown-content { display: none; position: absolute; right: 0; background-color: white; border: 1px solid #e9ecef; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); min-width: 160px; z-index: 1; }
+.shop-page .user-dropdown:hover .user-dropdown-content { display: block; }
+.shop-page .user-dropdown-content a, .shop-page .user-dropdown-content form button { display: block; padding: 0.75rem 1rem; font-size: 0.95rem; color: #495057; background: none; border: none; width: 100%; text-align: left; cursor: pointer; }
+.shop-page .user-dropdown-content a:hover, .shop-page .user-dropdown-content form button:hover { background-color: #f8f9fa; }
+
+/* 2.2 Hero (Tienda) */
+.shop-page .hero-section { background-color: #1a233a; color: #ffffff; padding: 6rem 0; text-align: center; }
+.shop-page .hero-content { max-width: 700px; margin: 0 auto; }
+.shop-page .hero-title { font-size: 3.5rem; font-weight: 800; margin-bottom: 1rem; }
+.shop-page .hero-subtitle { font-size: 1.25rem; font-weight: 300; color: #ced4da; margin-bottom: 2.5rem; }
+.shop-page .hero-features { display: flex; justify-content: center; gap: 1rem; margin-bottom: 3rem; }
+.shop-page .hero-feature { background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.75rem 1.25rem; border-radius: 50px; font-size: 0.9rem; font-weight: 500; display: flex; align-items: center; gap: 0.5rem; }
+.shop-page .btn-cta { background-color: #ffffff; color: #1a233a; font-size: 1rem; font-weight: 700; padding: 0.9rem 2.5rem; border-radius: 8px; transition: background-color 0.2s, transform 0.2s; }
+.shop-page .btn-cta:hover { background-color: #f0f0f0; transform: translateY(-2px); }
+
+/* 2.3 "Por qué elegirnos" (Tienda) */
+.shop-page .why-us-section { padding: 6rem 0; background-color: #ffffff; text-align: center; }
+.shop-page .section-title { font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; }
+.shop-page .section-subtitle { font-size: 1.1rem; color: #6c757d; max-width: 600px; margin: 0 auto 4rem auto; }
+.shop-page .why-us-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 4rem; }
+.shop-page .why-us-card { background-color: #ffffff; border: 1px solid #e9ecef; border-radius: 12px; padding: 2rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); }
+.shop-page .why-us-card i { font-size: 2.5rem; margin-bottom: 1.5rem; }
+.shop-page .why-us-card .fa-mobile-screen-button { color: #0d6efd; }
+.shop-page .why-us-card .fa-bolt-lightning { color: #198754; }
+.shop-page .why-us-card .fa-shield-halved { color: #0d6efd; }
+.shop-page .why-us-card .fa-credit-card { color: #fd7e14; }
+.shop-page .why-us-card h3 { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; }
+.shop-page .why-us-card p { font-size: 0.95rem; color: #6c757d; }
+.shop-page .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+.shop-page .stat-item i { font-size: 2rem; margin-bottom: 1rem; color: #495057; }
+.shop-page .stat-item h3 { font-size: 1.75rem; font-weight: 700; }
+.shop-page .stat-item p { font-size: 0.9rem; color: #6c757d; }
+
+/* 2.4 Productos (Tienda) */
+.shop-page .products-section { padding: 6rem 0; background-color: #f8f9fa; }
+.shop-page .products-header { text-align: center; margin-bottom: 4rem; }
+.shop-page .products-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+.shop-page .product-card { background-color: #ffffff; border: 1px solid #e9ecef; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); overflow: hidden; display: flex; flex-direction: column; }
+.shop-page .product-image-box { background-color: #f8f9fa; position: relative; padding: 1rem; display: flex; align-items: center; justify-content: center; height: 280px; }
+.shop-page .product-image-box .badge { position: absolute; top: 1rem; left: 1rem; background-color: #fd7e14; color: #ffffff; font-size: 0.8rem; font-weight: 600; padding: 0.3rem 0.6rem; border-radius: 6px; }
+.shop-page .product-image-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.shop-page .product-content { padding: 1.5rem; display: flex; flex-direction: column; flex-grow: 1; }
+.shop-page .product-content h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+.shop-page .product-rating { font-size: 0.9rem; color: #6c757d; margin-bottom: 0.75rem; }
+.shop-page .product-rating .fa-star { color: #f59e0b; }
+.shop-page .product-features { font-size: 0.9rem; color: #495057; list-style: none; margin-bottom: 1.5rem; flex-grow: 1; }
+.shop-page .product-features li { margin-bottom: 0.25rem; white-space: pre-line; }
+.shop-page .product-price { font-size: 1.5rem; font-weight: 700; color: #1a233a; margin-bottom: 1rem; }
+.shop-page .btn-add-cart { background-color: #1a233a; color: #ffffff; text-align: center; padding: 0.75rem 1rem; border-radius: 8px; font-weight: 600; }
+/* --- INICIO ESTILOS DEL MODAL DE LOGIN --- */
+
+/* El fondo oscuro semi-transparente */
+.auth-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* La caja blanca del modal */
+.auth-modal {
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-width: 450px;
+    width: 90%;
+    position: relative;
+    padding: 2rem;
+    animation: modal-fade-in 0.3s ease;
+}
+
+@keyframes modal-fade-in {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Botón de cerrar (X) */
+.auth-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #adb5bd;
+    cursor: pointer;
+}
+
+.auth-modal-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #212529;
+}
+.auth-modal-header p {
+    font-size: 1rem;
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+}
+
+/* Pestañas (Login / Registro) */
+.auth-modal-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    padding: 5px;
+    margin-bottom: 1.5rem;
+}
+.auth-modal-tabs .auth-tab-link {
+    background: none;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+.auth-modal-tabs .auth-tab-link.active {
+    background-color: #ffffff;
+    color: #1a233a;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.auth-modal-body .auth-tab-content {
+    display: none; /* Ocultos por defecto */
+}
+.auth-modal-body .auth-tab-content.active {
+    display: block; /* Se muestra el activo */
+}
+
+.auth-modal-body h4 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.25rem; }
+.auth-modal-body p { font-size: 0.95rem; color: #6c757d; margin-bottom: 1.5rem; }
+
+/* Estilos de los formularios */
+.form-group { margin-bottom: 1rem; }
+.form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+.form-group input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    box-sizing: border-box; /* Importante */
+}
+
+.btn-submit {
+    background-color: #1a233a; /* Azul oscuro */
+    color: #ffffff;
+    width: 100%;
+    padding: 0.9rem 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Cuentas de prueba */
+.cuentas-prueba-titulo {
+    display: block;
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #adb5bd;
+    margin: 2rem 0 1rem 0;
+}
+.cuenta-prueba {
+    display: flex;
+    align-items: center;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+}
+.cuenta-prueba i { font-size: 1.2rem; color: #0d6efd; margin-right: 1rem; }
+.cuenta-prueba .fa-crown { color: #fd7e14; }
+.cuenta-prueba div { display: flex; flex-direction: column; }
+.cuenta-prueba strong { font-weight: 600; }
+.cuenta-prueba small { font-size: 0.9rem; color: #6c757d; }
+.badge-admin {
+    background-color: #dc3545; /* Rojo */
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 0.5rem;
+    align-self: flex-start;
+}
