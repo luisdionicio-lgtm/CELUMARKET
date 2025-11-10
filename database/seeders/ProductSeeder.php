@@ -367,5 +367,13 @@ Product::create([
             'in_stock' => true,
             'featured' => true,
         ]);
+
+        Product::query()->each(function (Product $product) {
+            $product->updateQuietly([
+                'nombre' => $product->name,
+                'precio' => $product->price,
+                'stock' => $product->in_stock ? 25 : 0,
+            ]);
+        });
     }
 }

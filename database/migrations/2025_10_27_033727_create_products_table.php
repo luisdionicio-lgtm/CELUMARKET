@@ -6,27 +6,32 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Ejecutar las migraciones.
-     * Crea la tabla 'products' para almacenar información de los productos.
-     */
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->id(); // Identificador único del producto (clave primaria)
-            $table->string('name'); // Nombre del producto
-            $table->string('brand'); // Marca del producto
-            $table->text('description'); // Descripción detallada del producto
-            $table->decimal('price', 10, 2); // Precio con hasta 10 dígitos y 2 decimales
-            $table->string('image_url'); // URL de la imagen del producto
-            $table->timestamps(); // Campos created_at y updated_at
+            $table->id();
+            $table->string('nombre')->nullable();
+            $table->decimal('precio', 10, 2)->default(0);
+            $table->integer('stock')->default(0);
+            // Campos existentes para mantener la tienda en funcionamiento
+            $table->string('name');
+            $table->string('brand')->nullable();
+            $table->text('description')->nullable();
+            $table->decimal('price', 10, 2)->default(0);
+            $table->string('image_url')->nullable();
+            $table->float('rating')->default(0);
+            $table->string('storage')->nullable();
+            $table->string('ram')->nullable();
+            $table->string('processor')->nullable();
+            $table->string('camera')->nullable();
+            $table->string('screen')->nullable();
+            $table->string('battery')->nullable();
+            $table->boolean('in_stock')->default(true);
+            $table->boolean('featured')->default(false);
+            $table->timestamps();
         });
     }
 
-    /**
-     * Revertir las migraciones.
-     * Elimina la tabla 'products' si existe.
-     */
     public function down(): void
     {
         Schema::dropIfExists('products');

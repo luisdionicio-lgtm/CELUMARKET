@@ -1,5 +1,5 @@
 <style>
-    /* --- AUTH MODAL (Tailwind complement) --- */
+    /* --- MODAL DE AUTENTICACIÓN (complemento Tailwind) --- */
     .auth-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: none; align-items: flex-start; justify-content: center; padding: 3rem 1rem; z-index: 1100; }
     .auth-modal-overlay.open { display: flex; }
     .auth-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; padding: .5rem; margin: 1rem; background: #f3f6fb; border-radius: 999px; }
@@ -22,34 +22,34 @@
     .auth-close { position: absolute; right: .75rem; top: .75rem; background: transparent; border: none; font-size: 1.1rem; cursor: pointer; color: #6b7280; }
 </style>
 
-<!-- Auth Modal Component -->
+<!-- Componente de modal de autenticación -->
 <div id="authModalOverlay" class="auth-modal-overlay" aria-hidden="true">
     <div class="auth-modal w-full max-w-2xl bg-white rounded-2xl border border-slate-200 shadow-2xl relative" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
         <header class="text-slate-500 text-sm border-b border-slate-100 px-5 py-4">
             Inicia sesión o regístrate para acceder a todas las funcionalidades de CELU MARKET
-            <button class="auth-close" id="close-auth-modal" aria-label="Cerrar">✕</button>
+            <button class="auth-close" id="close-auth-modal" aria-label="Cerrar">×</button>
         </header>
 
         <div class="auth-tabs" role="tablist">
-            <button class="auth-tab active" id="tab-login" role="tab" aria-selected="true">Iniciar Sesión</button>
+            <button class="auth-tab active" id="tab-login" role="tab" aria-selected="true">Iniciar sesión</button>
             <button class="auth-tab" id="tab-register" role="tab" aria-selected="false">Registrarse</button>
         </div>
 
         <div class="auth-content">
-            <!-- LOGIN -->
+            <!-- INICIO DE SESIÓN -->
             <div id="panel-login" class="auth-panel" role="tabpanel" aria-labelledby="tab-login">
                 <div class="auth-card auth-form">
-                    <h3 class="text-lg font-semibold">Iniciar Sesión</h3>
+                    <h3 class="text-lg font-semibold">Iniciar sesión</h3>
                     <p class="text-slate-500">Ingresa tus credenciales para acceder a tu cuenta</p>
                     <form method="POST" action="{{ route('login') }}" class="space-y-3">
                         @csrf
-                        <label for="login_email">Email</label>
+                        <label for="login_email">Correo electrónico</label>
                         <input id="login_email" class="auth-input" type="email" name="email" placeholder="tu@email.com" required autocomplete="username">
                         <div style="height:.65rem"></div>
                         <label for="login_password">Contraseña</label>
                         <input id="login_password" class="auth-input" type="password" name="password" placeholder="••••••••" required autocomplete="current-password">
                         <div style="height:1rem"></div>
-                        <button type="submit" class="btn-auth-primary">Iniciar Sesión</button>
+                        <button type="submit" class="btn-auth-primary">Iniciar sesión</button>
                     </form>
                 </div>
 
@@ -57,9 +57,9 @@
                 <div class="demo-card">
                     <div class="demo-icon"><i class="fa-solid fa-crown"></i></div>
                     <div>
-                        <strong>Administrador</strong> <span class="badge">Admin</span><br>
+                        <strong>Administrador</strong> <span class="badge">Administrador</span><br>
                         <small>admin@celumarket.com</small><br>
-                        <small style="color:#6b7280">Acceso completo al panel de administración</small>
+                        <small style="color:#6b7280">Acceso completo al panel</small>
                     </div>
                 </div>
                 <div class="demo-card">
@@ -80,23 +80,23 @@
                 </div>
             </div>
 
-            <!-- REGISTER -->
+            <!-- REGISTRO -->
             <div id="panel-register" class="auth-panel" role="tabpanel" aria-labelledby="tab-register" style="display:none;">
                 <div class="auth-card auth-form">
-                    <h3 class="text-lg font-semibold">Crear Cuenta</h3>
+                    <h3 class="text-lg font-semibold">Crear cuenta</h3>
                     <p class="text-slate-500">Regístrate para comprar y gestionar tus pedidos</p>
                     <form method="POST" action="{{ route('register') }}" class="space-y-3">
                         @csrf
                         <label for="reg_name">Nombre</label>
                         <input id="reg_name" class="auth-input" type="text" name="name" placeholder="Tu nombre" required autocomplete="name">
                         <div style="height:.65rem"></div>
-                        <label for="reg_email">Email</label>
+                        <label for="reg_email">Correo electrónico</label>
                         <input id="reg_email" class="auth-input" type="email" name="email" placeholder="tu@email.com" required autocomplete="email">
                         <div style="height:.65rem"></div>
                         <label for="reg_password">Contraseña</label>
                         <input id="reg_password" class="auth-input" type="password" name="password" required autocomplete="new-password">
                         <div style="height:.65rem"></div>
-                        <label for="reg_password_confirmation">Confirmar Contraseña</label>
+                        <label for="reg_password_confirmation">Confirmar contraseña</label>
                         <input id="reg_password_confirmation" class="auth-input" type="password" name="password_confirmation" required autocomplete="new-password">
                         <div style="height:1rem"></div>
                         <button type="submit" class="btn-auth-primary">Registrarse</button>
@@ -131,4 +131,3 @@
         if (location.hash === '#register') { open(); showRegister(); }
     })();
 </script>
-

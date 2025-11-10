@@ -9,6 +9,7 @@
     @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
 <body class="bg-slate-50 text-slate-900 font-sans antialiased">
+    @php($productos = $products)
     <header class="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
         <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
             <a href="/" class="flex items-center gap-3 text-slate-900">
@@ -138,31 +139,31 @@
                 </div>
 
                 <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                    @foreach ($products as $product)
+                    @foreach ($productos as $producto)
                         <article class="flex flex-col rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
                             <div class="relative flex items-center justify-center bg-slate-50 p-6">
-                                @if ($product->featured)
+                                @if ($producto->featured)
                                     <span class="absolute left-4 top-4 rounded-full bg-amber-500 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">Destacado</span>
                                 @endif
-                                <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="h-60 w-full object-contain" />
+                                <img src="{{ $producto->image_url }}" alt="{{ $producto->name }}" class="h-60 w-full object-contain" />
                             </div>
                             <div class="flex flex-1 flex-col p-6">
                                 <div>
-                                    <h3 class="text-lg font-semibold text-slate-900">{{ $product->name }}</h3>
+                                    <h3 class="text-lg font-semibold text-slate-900">{{ $producto->name }}</h3>
                                     <div class="mt-2 flex items-center gap-2 text-sm text-slate-500">
                                         <i class="fa-solid fa-star text-amber-400"></i>
-                                        ({{ number_format($product->rating, 1) }})
+                                        ({{ number_format($producto->rating, 1) }})
                                     </div>
                                 </div>
                                 <ul class="mt-4 flex-1 list-disc space-y-2 pl-5 text-sm text-slate-600">
-                                    @if (!empty($product->description))
-                                        <li>{!! nl2br(e($product->description)) !!}</li>
+                                    @if (!empty($producto->description))
+                                        <li>{!! nl2br(e($producto->description)) !!}</li>
                                     @else
                                         <li class="italic text-slate-400">Sin descripción disponible</li>
                                     @endif
                                 </ul>
-                                <p class="mt-4 text-2xl font-bold text-[#1a233a]">${{ number_format($product->price, 0) }}</p>
-                                <a href="#add-to-cart-{{ $product->id }}" class="mt-4 inline-flex items-center justify-center gap-2 rounded-xl bg-[#1a233a] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#303a58]">
+                                <p class="mt-4 text-2xl font-bold text-[#1a233a]">${{ number_format($producto->price, 0) }}</p>
+                                <a href="#add-to-cart-{{ $producto->id }}" class="mt-4 inline-flex items-center justify-center gap-2 rounded-xl bg-[#1a233a] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#303a58]">
                                     <i class="fa-solid fa-cart-plus"></i>
                                     Agregar
                                 </a>
