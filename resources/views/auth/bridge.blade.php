@@ -7,20 +7,36 @@
 </head>
 <body>
 <script>
-    (function(){
-        var to = {{ json_encode($to ?? '/') }};
-        try {
-            if (window.top) {
-                window.top.location.assign(to);
-            } else {
-                window.location.href = to;
-            }
-        } catch (e) {
-            window.location.href = to;
+    (function () {
+        var target = {{ json_encode($to ?? '/') }} || '/';
+        var payload = { type: 'celumarket-auth-redirect', to: target };
+
+        function fallbackRedirect() {
+            window.location.assign(target);
         }
+
+        try {
+            if (window.top && window.top !== window) {
+                window.top.location.assign(target);
+                return;
+            }
+        } catch (error) {
+            // Si no podemos controlar la ventana superior, seguimos con postMessage.
+        }
+
+        if (window.parent && window.parent !== window) {
+            try {
+                window.parent.postMessage(payload, '*');
+                setTimeout(fallbackRedirect, 800);
+                return;
+            } catch (error) {
+                // No se pudo enviar el mensaje, aplicamos la redirección local.
+            }
+        }
+
+        fallbackRedirect();
     })();
- </script>
- Redirigiendo…
+</script>
+<p>Redirigiendo…</p>
 </body>
 </html>
-
