@@ -5,46 +5,133 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class CartController extends Controller
 {
-    /**
-     * Agrega un producto al carrito del usuario autenticado.
-     *
-     * @param Request $request - La solicitud HTTP entrante.
-     * @param Product $product - El producto que se desea agregar.
-     * @return \Illuminate\Http\RedirectResponse - Redirige a la tienda después de agregar.
-     */
+    public function index()
+    {
+        $items = $this->cartItems();
+
+        $totals = [
+            'quantity' => $items->sum('quantity'),
+            'price' => $items->sum('subtotal'),
+        ];
+
+        return view('cart.index', [
+            'items' => $items,
+            'totals' => $totals,
+        ]);
+    }
+
     public function add(Request $request, Product $product)
     {
-        // Obtiene el ID del usuario autenticado
-        $userId = Auth::id();
+        $quantity = max(1, (int) $request->input('quantity', 1));
 
-        // Evita agregar productos sin stock
         if (!$product->in_stock) {
-            return redirect()->route('shop.index')->with('status', 'Producto sin stock');
+            return back()->with('status', 'Producto sin stock.');
         }
 
-        // Busca si el producto ya está en el carrito del usuario
-        $cartItem = Cart::where('user_id', $userId)
-                        ->where('product_id', $product->id)
-                        ->first();
-
-        // Si el producto ya está en el carrito, incrementa la cantidad
-        if ($cartItem) {
-            $cartItem->quantity += 1;
-            $cartItem->save();
+        if (Auth::check()) {
+            $this->incrementDatabaseCart($product, $quantity);
         } else {
-            // Si no está en el carrito, lo agrega con cantidad 1
-            Cart::create([
-                'user_id' => $userId,
-                'product_id' => $product->id,
-                'quantity' => 1,
-            ]);
+            $this->incrementSessionCart($product->id, $quantity);
         }
 
-        // Redirige al catálogo de la tienda
-        return redirect()->route('shop.index');
+        return back()->with('status', 'Producto agregado al carrito.');
+    }
+
+    public function update(Request $request, Product $product)
+    {
+        $quantity = max(1, (int) $request->input('quantity', 1));
+
+        if (Auth::check()) {
+            Cart::updateOrCreate(
+                ['user_id' => Auth::id(), 'product_id' => $product->id],
+                ['quantity' => $quantity]
+            );
+        } else {
+            $cart = Session::get('cart', []);
+            if (array_key_exists($product->id, $cart)) {
+                $cart[$product->id] = $quantity;
+                Session::put('cart', $cart);
+            }
+        }
+
+        return back()->with('status', 'Cantidad actualizada.');
+    }
+
+    public function remove(Product $product)
+    {
+        if (Auth::check()) {
+            Cart::where('user_id', Auth::id())
+                ->where('product_id', $product->id)
+                ->delete();
+        } else {
+            $cart = Session::get('cart', []);
+            unset($cart[$product->id]);
+            Session::put('cart', $cart);
+        }
+
+        return back()->with('status', 'Producto eliminado del carrito.');
+    }
+
+    protected function cartItems(): Collection
+    {
+        if (Auth::check()) {
+            return Cart::with('product')
+                ->where('user_id', Auth::id())
+                ->get()
+                ->filter(fn (Cart $cart) => $cart->product)
+                ->map(fn (Cart $cart) => $this->formatCartLine($cart->product, $cart->quantity));
+        }
+
+        $sessionCart = Session::get('cart', []);
+        $products = Product::whereIn('id', array_keys($sessionCart))->get()->keyBy('id');
+
+        return collect($sessionCart)->map(function ($quantity, $productId) use ($products) {
+            if (!$products->has($productId)) {
+                return null;
+            }
+
+            return $this->formatCartLine($products[$productId], $quantity);
+        })->filter();
+    }
+
+    protected function formatCartLine(Product $product, int $quantity): object
+    {
+        $price = $this->resolvePrice($product);
+
+        return (object) [
+            'product' => $product,
+            'quantity' => $quantity,
+            'subtotal' => $quantity * $price,
+            'price' => $price,
+        ];
+    }
+
+    protected function resolvePrice(Product $product): float
+    {
+        return (float) ($product->precio ?? $product->price ?? 0);
+    }
+
+    protected function incrementDatabaseCart(Product $product, int $quantity): void
+    {
+        $cartItem = Cart::firstOrNew([
+            'user_id' => Auth::id(),
+            'product_id' => $product->id,
+        ]);
+
+        $cartItem->quantity = ($cartItem->exists ? $cartItem->quantity : 0) + $quantity;
+        $cartItem->save();
+    }
+
+    protected function incrementSessionCart(int $productId, int $quantity): void
+    {
+        $cart = Session::get('cart', []);
+        $cart[$productId] = ($cart[$productId] ?? 0) + $quantity;
+        Session::put('cart', $cart);
     }
 }

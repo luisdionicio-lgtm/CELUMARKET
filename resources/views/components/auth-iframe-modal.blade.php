@@ -1,30 +1,42 @@
 <!-- Modal de autenticación en iframe -->
-<div id="authIframeOverlay" class="fixed inset-0 hidden items-start justify-center bg-black/60 p-4 md:p-12 z-50" aria-hidden="true">
-    <div class="relative w-full max-w-2xl rounded-2xl border border-slate-200 bg-white shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="authIframeTitle">
+<div id="authIframeOverlay"
+     class="fixed inset-0 hidden items-start justify-center bg-black/60 p-4 md:p-12 z-50"
+     aria-hidden="true">
+    <div class="relative w-full max-w-2xl rounded-2xl border border-slate-200 bg-white shadow-2xl"
+         role="dialog" aria-modal="true" aria-labelledby="authIframeTitle">
         <header class="px-5 pt-5 text-slate-700">
             <h3 id="authIframeTitle" class="text-lg font-semibold">Accede a tu cuenta</h3>
-            <p class="mb-3 -mt-1 text-sm text-slate-500">Inicia sesión o regístrate para disfrutar todas las funciones de CELU MARKET</p>
+            <p class="mb-3 -mt-1 text-sm text-slate-500">
+                Inicia sesión o regístrate para disfrutar todas las funciones de CELU MARKET
+            </p>
         </header>
 
         <div class="px-5 pb-6">
-            <iframe id="auth-iframe" src="about:blank" class="h-[72vh] w-full rounded-xl border border-slate-200 md:h-[80vh]" referrerpolicy="no-referrer" loading="lazy"></iframe>
+            <iframe id="auth-iframe"
+                    src="about:blank"
+                    class="h-[72vh] w-full rounded-xl border border-slate-200 md:h-[80vh]"
+                    referrerpolicy="no-referrer"
+                    loading="lazy"></iframe>
         </div>
 
-        <button id="close-auth-iframe" class="absolute right-3 top-3 text-xl text-slate-400 transition hover:text-slate-600" aria-label="Cerrar">×</button>
+        <button id="close-auth-iframe"
+                class="absolute right-3 top-3 text-xl text-slate-400 transition hover:text-slate-600"
+                aria-label="Cerrar">×</button>
     </div>
 </div>
 
 <script>
-    (function () {
+    (function() {
         const overlay = document.getElementById('authIframeOverlay');
-        const openBtn = document.getElementById('open-auth-modal');
         const closeBtn = document.getElementById('close-auth-iframe');
         const iframe = document.getElementById('auth-iframe');
 
-        const loginUrl = "{{ route('auth.embed.login', absolute: false) }}";
-        const registerUrl = "{{ route('auth.embed.register', absolute: false) }}";
-        const bridgePath = "{{ route('auth.bridge', absolute: false) }}";
+        // ✅ URLs seguras definidas en Laravel
+        const loginUrl = "{{ route('auth.embed.login') }}";
+        const registerUrl = "{{ route('auth.embed.register') }}";
+        const bridgePath = "{{ route('auth.bridge') }}";
 
+        // Abre el iframe con la vista correcta
         function setSrc(which) {
             if (!iframe) return;
             const current = window.location.pathname + window.location.search + window.location.hash;
@@ -41,15 +53,12 @@
         function close() {
             overlay?.classList.add('hidden');
             document.body.style.overflow = '';
-            if (iframe) {
-                iframe.src = 'about:blank';
-            }
+            if (iframe) iframe.src = 'about:blank';
         }
 
+        // Sanitiza redirección
         function sanitizeDestination(value) {
-            if (typeof value !== 'string' || value.length === 0) {
-                return window.location.pathname;
-            }
+            if (typeof value !== 'string' || value.length === 0) return window.location.pathname;
             if (value.startsWith('http://') || value.startsWith('https://')) {
                 try {
                     const url = new URL(value);
@@ -61,9 +70,7 @@
                 }
                 return window.location.pathname;
             }
-            if (value.startsWith('/')) {
-                return value;
-            }
+            if (value.startsWith('/')) return value;
             return '/' + value.replace(/^\/+/, '');
         }
 
@@ -71,17 +78,10 @@
             window.location.assign(sanitizeDestination(destination));
         }
 
-        if (openBtn) {
-            openBtn.addEventListener('click', (event) => {
-                event.preventDefault();
-                open('login');
-            });
-        }
-
+        // Asocia el evento a los botones con clase btn-open-auth-modal
         document.querySelectorAll('.btn-open-auth-modal').forEach((btn) => {
             btn.addEventListener('click', (event) => {
                 event.preventDefault();
-                event.stopImmediatePropagation();
                 open('login');
             });
         });
@@ -91,15 +91,15 @@
             if (event.target === overlay) close();
         });
 
+        // Escucha mensajes del iframe (cuando el login se completa)
         window.addEventListener('message', (event) => {
             const data = event.data || {};
-            if (data.type !== 'celumarket-auth-redirect') {
-                return;
-            }
+            if (data.type !== 'celumarket-auth-redirect') return;
             close();
             redirectTo(data.to);
         });
 
+        // Redirección automática post-login
         iframe?.addEventListener('load', () => {
             try {
                 const frameWindow = iframe.contentWindow;
@@ -113,7 +113,7 @@
                 close();
                 redirectTo(target);
             } catch (error) {
-                // Si no se puede acceder (p. ej. orígenes distintos), dependemos del postMessage.
+                // Si hay error de origen cruzado, se ignora.
             }
         });
 

@@ -10,6 +10,7 @@
 </head>
 <body class="bg-slate-50 text-slate-900 font-sans antialiased">
     @php($productos = $products)
+    @php($favoriteProductIds = $favoriteProductIds ?? [])
     <header class="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
         <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
             <a href="/" class="flex items-center gap-3 text-slate-900">
@@ -140,11 +141,29 @@
 
                 <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     @foreach ($productos as $producto)
+                        @php
+                            $isFavorite = in_array($producto->id, $favoriteProductIds ?? [], true);
+                            $precio = $producto->precio ?? $producto->price;
+                        @endphp
                         <article class="flex flex-col rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
                             <div class="relative flex items-center justify-center bg-slate-50 p-6">
                                 @if ($producto->featured)
                                     <span class="absolute left-4 top-4 rounded-full bg-amber-500 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">Destacado</span>
                                 @endif
+                                <div class="absolute right-4 top-4">
+                                    @auth
+                                        <form action="{{ route('favorites.toggle', $producto) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="text-xl {{ $isFavorite ? 'text-rose-500' : 'text-slate-400 hover:text-rose-500' }}">
+                                                <i class="{{ $isFavorite ? 'fa-solid' : 'fa-regular' }} fa-heart"></i>
+                                            </button>
+                                        </form>
+                                    @else
+                                        <button type="button" class="btn-open-auth-modal text-xl text-slate-400 hover:text-rose-500">
+                                            <i class="fa-regular fa-heart"></i>
+                                        </button>
+                                    @endauth
+                                </div>
                                 <img src="{{ $producto->image_url }}" alt="{{ $producto->name }}" class="h-60 w-full object-contain" />
                             </div>
                             <div class="flex flex-1 flex-col p-6">
@@ -162,11 +181,14 @@
                                         <li class="italic text-slate-400">Sin descripción disponible</li>
                                     @endif
                                 </ul>
-                                <p class="mt-4 text-2xl font-bold text-[#1a233a]">${{ number_format($producto->price, 0) }}</p>
-                                <a href="#add-to-cart-{{ $producto->id }}" class="mt-4 inline-flex items-center justify-center gap-2 rounded-xl bg-[#1a233a] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#303a58]">
-                                    <i class="fa-solid fa-cart-plus"></i>
-                                    Agregar
-                                </a>
+                                <p class="mt-4 text-2xl font-bold text-[#1a233a]">S/ {{ number_format($precio, 2) }}</p>
+                                <form action="{{ route('cart.add', $producto) }}" method="POST" class="mt-4">
+                                    @csrf
+                                    <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#1a233a] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#303a58]">
+                                        <i class="fa-solid fa-cart-plus"></i>
+                                        Agregar al carrito
+                                    </button>
+                                </form>
                             </div>
                         </article>
                     @endforeach

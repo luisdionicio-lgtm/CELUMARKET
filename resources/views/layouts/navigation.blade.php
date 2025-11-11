@@ -15,9 +15,17 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Panel principal') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')">
+                        {{ __('Carrito') }}
+                    </x-nav-link>
                     <x-nav-link :href="route('tickets.index')" :active="request()->routeIs('tickets.*')">
                         {{ __('Soporte') }}
                     </x-nav-link>
+                    @auth
+                        <x-nav-link :href="route('favorites.index')" :active="request()->routeIs('favorites.*')">
+                            {{ __('Favoritos') }}
+                        </x-nav-link>
+                    @endauth
                     @if(auth()->user()?->is_admin)
                         <x-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*') || request()->routeIs('products.*')">
                             {{ __('Admin Panel') }}
@@ -87,9 +95,17 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Panel principal') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')">
+                {{ __('Carrito') }}
+            </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('tickets.index')" :active="request()->routeIs('tickets.*')">
                 {{ __('Soporte') }}
             </x-responsive-nav-link>
+            @auth
+                <x-responsive-nav-link :href="route('favorites.index')" :active="request()->routeIs('favorites.*')">
+                    {{ __('Favoritos') }}
+                </x-responsive-nav-link>
+            @endauth
             @if(auth()->user()?->is_admin)
                 <x-responsive-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*') || request()->routeIs('products.*')">
                     {{ __('Admin Panel') }}

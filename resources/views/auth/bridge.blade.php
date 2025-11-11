@@ -6,37 +6,44 @@
     <title>Redirigiendo…</title>
 </head>
 <body>
+<p>Redirigiendo…</p>
+
 <script>
     (function () {
-        var target = {{ json_encode($to ?? '/') }} || '/';
-        var payload = { type: 'celumarket-auth-redirect', to: target };
+        // Lee el parámetro ?to de la URL
+        const params = new URLSearchParams(window.location.search);
+        const target = params.get('to') || '/';
+
+        // Mensaje que se enviará al padre (la tienda principal)
+        const payload = { type: 'celumarket-auth-redirect', to: target };
 
         function fallbackRedirect() {
             window.location.assign(target);
         }
 
         try {
+            // Si el iframe está embebido dentro de la misma ventana
             if (window.top && window.top !== window) {
-                window.top.location.assign(target);
+                window.top.postMessage(payload, window.location.origin);
+                setTimeout(fallbackRedirect, 600);
                 return;
             }
         } catch (error) {
-            // Si no podemos controlar la ventana superior, seguimos con postMessage.
+            // Si el acceso al top window falla, probamos con el parent
         }
 
-        if (window.parent && window.parent !== window) {
-            try {
-                window.parent.postMessage(payload, '*');
-                setTimeout(fallbackRedirect, 800);
+        try {
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage(payload, window.location.origin);
+                setTimeout(fallbackRedirect, 600);
                 return;
-            } catch (error) {
-                // No se pudo enviar el mensaje, aplicamos la redirección local.
             }
+        } catch (error) {
+            // Si tampoco se puede, hacemos redirect normal
         }
 
         fallbackRedirect();
     })();
 </script>
-<p>Redirigiendo…</p>
 </body>
 </html>

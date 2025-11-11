@@ -8,8 +8,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
+
 <body class="bg-slate-50 text-slate-900 antialiased">
-    @php($productos = $products)
+    @php
+        $productos = $products;
+        $favoriteProductIds = $favoriteProductIds ?? [];
+    @endphp
 
     <header class="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
         <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
@@ -65,6 +69,7 @@
     </header>
 
     <main class="pb-24">
+        <!-- Sección de destacados -->
         <section class="bg-[#10172A] py-20 text-white" id="destacados">
             <div class="mx-auto flex max-w-6xl flex-col gap-10 px-4 sm:px-6 lg:px-8 lg:flex-row lg:items-center lg:justify-between">
                 <div class="space-y-6 lg:w-1/2">
@@ -89,6 +94,7 @@
                         <i class="fa-solid fa-box-open"></i> Ver catálogo
                     </a>
                 </div>
+
                 <div class="grid flex-1 gap-4 sm:grid-cols-2">
                     <div class="rounded-2xl border border-white/15 bg-white/5 p-5 text-left backdrop-blur">
                         <p class="text-sm uppercase tracking-[0.35em] text-white/70">Clientes</p>
@@ -104,6 +110,7 @@
             </div>
         </section>
 
+        <!-- Sección de beneficios -->
         <section id="beneficios" class="bg-white py-16">
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 <div class="text-center">
@@ -139,6 +146,7 @@
             </div>
         </section>
 
+        <!-- Sección de productos -->
         <section id="productos" class="bg-slate-100 py-16">
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 <div class="text-center">
@@ -151,13 +159,35 @@
 
                 <div class="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
                     @foreach ($productos as $producto)
+                        @php
+                            $isFavorite = in_array($producto->id, $favoriteProductIds ?? [], true);
+                            $precio = $producto->precio ?? $producto->price;
+                        @endphp
+
                         <article class="flex flex-col rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
                             <div class="relative flex items-center justify-center bg-slate-50 p-6">
                                 @if ($producto->featured)
-                                    <span class="absolute left-4 top-4 rounded-full bg-amber-500 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">Destacado</span>
+                                    <span class="absolute left-4 top-4 rounded-full bg-amber-500 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
+                                        Destacado
+                                    </span>
                                 @endif
+                                <div class="absolute right-4 top-4">
+                                    @auth
+                                        <form action="{{ route('favorites.toggle', $producto) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="text-xl {{ $isFavorite ? 'text-rose-500' : 'text-slate-400 hover:text-rose-500' }}">
+                                                <i class="{{ $isFavorite ? 'fa-solid' : 'fa-regular' }} fa-heart"></i>
+                                            </button>
+                                        </form>
+                                    @else
+                                        <button type="button" class="btn-open-auth-modal text-xl text-slate-400 hover:text-rose-500">
+                                            <i class="fa-regular fa-heart"></i>
+                                        </button>
+                                    @endauth
+                                </div>
                                 <img src="{{ $producto->image_url }}" alt="{{ $producto->name }}" class="h-64 w-full object-contain" />
                             </div>
+
                             <div class="flex flex-1 flex-col p-6">
                                 <div>
                                     <h3 class="text-lg font-semibold text-slate-900">{{ $producto->name }}</h3>
@@ -166,6 +196,7 @@
                                         ({{ number_format($producto->rating, 1) }})
                                     </div>
                                 </div>
+
                                 <div class="mt-4 flex-1 text-sm text-slate-600">
                                     @if (!empty($producto->description))
                                         {!! nl2br(e($producto->description)) !!}
@@ -173,25 +204,24 @@
                                         <em class="text-slate-400">Sin descripción disponible</em>
                                     @endif
                                 </div>
+
                                 <div class="mt-4 flex items-center justify-between">
-                                    <span class="text-2xl font-bold text-[#1a233a]">${{ number_format($producto->price, 0) }}</span>
-                                    <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">Stock seguro</span>
+                                    <span class="text-2xl font-bold text-[#1a233a]">
+                                        S/ {{ number_format($precio, 2) }}
+                                    </span>
+                                    <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                                        Stock seguro
+                                    </span>
                                 </div>
+
                                 <div class="mt-4">
-                                    @auth
-                                        <form action="{{ route('cart.add', $producto) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1a233a] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#303a58]">
-                                                <i class="fa-solid fa-cart-plus"></i>
-                                                Agregar al carrito
-                                            </button>
-                                        </form>
-                                    @else
-                                        <button type="button" class="btn-open-auth-modal flex w-full items-center justify-center gap-2 rounded-xl bg-[#1a233a] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#303a58]">
+                                    <form action="{{ route('cart.add', $producto) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1a233a] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#303a58]">
                                             <i class="fa-solid fa-cart-plus"></i>
-                                            Inicia sesión para comprar
+                                            Agregar al carrito
                                         </button>
-                                    @endauth
+                                    </form>
                                 </div>
                             </div>
                         </article>
@@ -208,3 +238,4 @@
     <x-auth-iframe-modal />
 </body>
 </html>
+
