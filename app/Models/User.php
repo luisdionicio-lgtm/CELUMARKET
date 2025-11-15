@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Product;
+use App\Models\Cart;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -57,6 +58,11 @@ class User extends Authenticatable
         return $this->hasMany(Cart::class);
     }
 
+    /**
+     * Relación muchos a muchos con productos favoritos.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Models\Product>
+     */
     public function favorites()
     {
         return $this->belongsToMany(Product::class, 'favorites')->withTimestamps();

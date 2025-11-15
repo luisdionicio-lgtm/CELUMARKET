@@ -75,7 +75,7 @@
 
             <div class="flex justify-end gap-3">
                 <a href="{{ route('tickets.index') }}" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50">Cancelar</a>
-                <button type="submit" class="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-secondary">Crear Ticket</button>
+                <button type="submit" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50">Crear Ticket</button>
             </div>
         </form>
     </div>

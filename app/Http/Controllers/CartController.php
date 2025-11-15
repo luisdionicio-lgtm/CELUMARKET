@@ -7,6 +7,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 
 class CartController extends Controller
@@ -38,6 +39,7 @@ class CartController extends Controller
             $this->incrementDatabaseCart($product, $quantity);
         } else {
             $this->incrementSessionCart($product->id, $quantity);
+            Session::save();
         }
 
         return back()->with('status', 'Producto agregado al carrito.');
@@ -57,6 +59,7 @@ class CartController extends Controller
             if (array_key_exists($product->id, $cart)) {
                 $cart[$product->id] = $quantity;
                 Session::put('cart', $cart);
+                Session::save();
             }
         }
 
@@ -73,6 +76,7 @@ class CartController extends Controller
             $cart = Session::get('cart', []);
             unset($cart[$product->id]);
             Session::put('cart', $cart);
+            Session::save();
         }
 
         return back()->with('status', 'Producto eliminado del carrito.');
@@ -123,7 +127,6 @@ class CartController extends Controller
             'user_id' => Auth::id(),
             'product_id' => $product->id,
         ]);
-
         $cartItem->quantity = ($cartItem->exists ? $cartItem->quantity : 0) + $quantity;
         $cartItem->save();
     }
@@ -133,5 +136,40 @@ class CartController extends Controller
         $cart = Session::get('cart', []);
         $cart[$productId] = ($cart[$productId] ?? 0) + $quantity;
         Session::put('cart', $cart);
+        Session::save();
+    }
+
+    // ✅ Mostrar formulario de pago solo si el carrito no está vacío
+    public function checkout()
+    {
+        if ($this->cartItems()->isEmpty()) {
+            return redirect()->route('cart.index')->with('status', 'Tu carrito está vacío.');
+        }
+
+        return view('cart.payment');
+    }
+
+    // ✅ Procesar el pago y enviar el recibo
+    public function processPayment(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'method' => 'required|in:card,cash',
+            'card_number' => 'required_if:method,card',
+            'expiry' => 'required_if:method,card',
+            'cvv' => 'required_if:method,card',
+            'payment_code' => 'required_if:method,cash',
+        ]);
+
+        Mail::raw("Gracias por tu compra en CELU MARKET. Tu voucher ha sido enviado.", function ($message) use ($user) {
+            $message->to($user->email)
+                    ->subject('Confirmación de pago - CELU MARKET');
+        });
+
+        // ✅ Vaciar carrito después del pago
+        Cart::where('user_id', $user->id)->delete();
+
+        return redirect()->route('cart.index')->with('status', 'Pago confirmado. El recibo fue enviado a tu correo registrado.');
     }
 }

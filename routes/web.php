@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LandingPageController::class, 'index'])->name('landing');
 Route::get('/tienda', [ShopPageController::class, 'index'])->name('shop.index');
+
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
 Route::patch('/cart/{product}', [CartController::class, 'update'])->name('cart.update');
@@ -22,20 +23,30 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    // 🛠 Soporte
     Route::view('/support', 'support.index')->name('support.index');
+
+    // ⭐ Favoritos
     Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
     Route::post('/favorites/{product}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 
+    // 👤 Perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // 📦 Recursos
     Route::resource('products', ProductController::class);
     Route::resource('orders', OrderController::class);
     Route::resource('tickets', TicketController::class);
+
+    // 💳 Flujo de pago
+    Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+    Route::post('/cart/process-payment', [CartController::class, 'processPayment'])->name('cart.processPayment');
 });
 
-//  RUTAS PARA EL MODAL DE AUTENTICACIÓN (iframe)
+
+// 🔐 Rutas para el modal de autenticación (iframe)
 Route::get('/auth/embed/login', function () {
     return view('auth.login');
 })->name('auth.embed.login');
@@ -45,7 +56,7 @@ Route::get('/auth/embed/register', function () {
 })->name('auth.embed.register');
 
 Route::get('/auth/bridge', function () {
-    $to = request('to', '/'); // obtiene el destino
+    $to = request('to', '/');
     return view('auth.bridge', ['to' => $to]);
 })->name('auth.bridge');
 

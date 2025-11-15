@@ -10,65 +10,134 @@
 </head>
 
 <body class="bg-slate-50 text-slate-900 antialiased">
-    @php
-        $productos = $products;
-        $favoriteProductIds = $favoriteProductIds ?? [];
-    @endphp
+@php
+    $productos = $products;
+    $favoriteProductIds = $favoriteProductIds ?? [];
+@endphp
 
-    <header class="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-            <a href="{{ url('/') }}" class="flex items-center gap-3 text-slate-900">
-                <i class="fa-solid fa-mobile-screen-button text-2xl"></i>
-                <div class="leading-tight">
-                    <strong class="text-base font-semibold">CELU MARKET</strong>
-                    <span class="block text-xs text-slate-500">Tienda especializada</span>
-                </div>
+<header class="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
+    <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
+        <a href="{{ url('/') }}" class="flex items-center gap-3 text-slate-900">
+            <i class="fa-solid fa-mobile-screen-button text-2xl"></i>
+            <div class="leading-tight">
+                <strong class="text-base font-semibold">CELU MARKET</strong>
+                <span class="block text-xs text-slate-500">Tienda especializada</span>
+            </div>
+        </a>
+
+        <nav class="hidden items-center gap-5 text-sm font-medium text-slate-600 lg:flex">
+            <a href="#productos" class="transition hover:text-[#0d6efd]">Productos</a>
+            <a href="#beneficios" class="transition hover:text-[#0d6efd]">Beneficios</a>
+            <a href="#destacados" class="transition hover:text-[#0d6efd]">Destacados</a>
+        </nav>
+
+        <div class="hidden w-64 items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-500 md:flex">
+            <i class="fa-solid fa-search"></i>
+            <input type="text" placeholder="Buscar celulares..." class="w-full border-0 bg-transparent p-0 text-sm text-slate-700 placeholder:text-slate-400 focus:ring-0" />
+        </div>
+
+        <div class="flex items-center gap-4 text-xl text-slate-500">
+            <a href="#carrito" aria-label="Carrito" class="transition hover:text-[#0d6efd]">
+                <i class="fa-solid fa-cart-shopping"></i>
             </a>
 
-            <nav class="hidden items-center gap-5 text-sm font-medium text-slate-600 lg:flex">
-                <a href="#productos" class="transition hover:text-[#0d6efd]">Productos</a>
-                <a href="#beneficios" class="transition hover:text-[#0d6efd]">Beneficios</a>
-                <a href="#destacados" class="transition hover:text-[#0d6efd]">Destacados</a>
-            </nav>
-
-            <div class="hidden w-64 items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-500 md:flex">
-                <i class="fa-solid fa-search"></i>
-                <input type="text" placeholder="Buscar celulares..." class="w-full border-0 bg-transparent p-0 text-sm text-slate-700 placeholder:text-slate-400 focus:ring-0" />
-            </div>
-
-            <div class="flex items-center gap-4 text-xl text-slate-500">
-                <a href="#carrito" aria-label="Carrito" class="transition hover:text-[#0d6efd]">
-                    <i class="fa-solid fa-cart-shopping"></i>
-                </a>
-
-                @auth
-                    <details class="relative">
-                        <summary class="flex cursor-pointer list-none items-center gap-2 rounded-full border border-slate-200 px-3 py-1.5 text-sm font-semibold text-slate-600 transition hover:border-slate-300">
-                            <i class="fa-solid fa-user text-base"></i>
-                            {{ \Illuminate\Support\Str::limit(Auth::user()->name, 10) }}
-                        </summary>
-                        <div class="absolute right-0 mt-2 w-48 rounded-xl border border-slate-200 bg-white p-3 text-sm shadow-xl">
-                            <a href="{{ route('profile.edit') }}" class="block rounded-lg px-3 py-2 text-slate-600 transition hover:bg-slate-50">
-                                Mi perfil
-                            </a>
-                            <form method="POST" action="{{ route('logout') }}" class="mt-1">
-                                @csrf
-                                <button type="submit" class="w-full rounded-lg px-3 py-2 text-left text-rose-600 transition hover:bg-rose-50">
-                                    Cerrar sesión
-                                </button>
-                            </form>
-                        </div>
-                    </details>
-                @else
-                    <button type="button" class="btn-open-auth-modal text-slate-500 transition hover:text-[#0d6efd]" aria-label="Abrir modal de autenticación">
-                        <i class="fa-solid fa-user"></i>
-                    </button>
-                @endauth
-            </div>
+            @auth
+                <details class="relative">
+                    <summary class="flex cursor-pointer list-none items-center gap-2 rounded-full border border-slate-200 px-3 py-1.5 text-sm font-semibold text-slate-600 transition hover:border-slate-300">
+                        <i class="fa-solid fa-user text-base"></i>
+                        {{ \Illuminate\Support\Str::limit(Auth::user()->name, 10) }}
+                    </summary>
+                    <div class="absolute right-0 mt-2 w-48 rounded-xl border border-slate-200 bg-white p-3 text-sm shadow-xl">
+                        <a href="{{ route('profile.edit') }}" class="block rounded-lg px-3 py-2 text-slate-600 transition hover:bg-slate-50">
+                            Mi perfil
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}" class="mt-1">
+                            @csrf
+                            <button type="submit" class="w-full rounded-lg px-3 py-2 text-left text-rose-600 transition hover:bg-rose-50">
+                                Cerrar sesión
+                            </button>
+                        </form>
+                    </div>
+                </details>
+            @else
+                <button type="button" id="open-auth-modal" class="btn-open-auth-modal text-slate-500 transition hover:text-[#0d6efd]" aria-label="Abrir modal de autenticación">
+                    <i class="fa-solid fa-user"></i>
+                </button>
+            @endauth
         </div>
-    </header>
+    </div>
+</header>
 
-    <main class="pb-24">
+<main class="pb-24">
+    @if(session('status'))
+    <div class="mx-auto max-w-6xl mt-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 shadow-sm">
+        {{ session('status') }}
+    </div>
+    @endif
+
+    {{-- Modal de autenticación --}}
+    @include('components.auth-modal')
+</main>
+
+{{-- Script para activar el modal --}}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const overlay = document.getElementById('authModalOverlay');
+    const openBtn = document.getElementById('open-auth-modal');
+    const closeBtn = document.getElementById('close-auth-modal');
+    const tabLogin = document.getElementById('tab-login');
+    const tabRegister = document.getElementById('tab-register');
+    const panelLogin = document.getElementById('panel-login');
+    const panelRegister = document.getElementById('panel-register');
+
+    function open() {
+        overlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function close() {
+        overlay.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    function showLogin() {
+        tabLogin.classList.add('active');
+        tabRegister.classList.remove('active');
+        panelLogin.style.display = 'block';
+        panelRegister.style.display = 'none';
+    }
+
+    function showRegister() {
+        tabRegister.classList.add('active');
+        tabLogin.classList.remove('active');
+        panelRegister.style.display = 'block';
+        panelLogin.style.display = 'none';
+    }
+
+    if (openBtn) {
+        openBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            open();
+            showLogin();
+        });
+    }
+
+    if (closeBtn) closeBtn.addEventListener('click', close);
+    if (overlay) overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) close();
+    });
+
+    if (tabLogin) tabLogin.addEventListener('click', showLogin);
+    if (tabRegister) tabRegister.addEventListener('click', showRegister);
+
+    if (location.hash === '#register') {
+        open();
+        showRegister();
+    }
+});
+</script>
+</body>
+</html>
         <!-- Sección de destacados -->
         <section class="bg-[#10172A] py-20 text-white" id="destacados">
             <div class="mx-auto flex max-w-6xl flex-col gap-10 px-4 sm:px-6 lg:px-8 lg:flex-row lg:items-center lg:justify-between">
@@ -109,133 +178,87 @@
                 </div>
             </div>
         </section>
+<!-- Sección de productos -->
+<section id="productos" class="bg-slate-100 py-16">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <p class="text-sm uppercase tracking-[0.3em] text-slate-500">Catálogo</p>
+            <h2 class="mt-3 text-3xl font-bold text-slate-900">Explora nuestros productos</h2>
+            <p class="mx-auto mt-4 max-w-2xl text-base text-slate-600">
+                Seleccionamos los equipos mejor valorados para que encuentres el celular ideal.
+            </p>
+        </div>
+        <div class="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            @foreach ($productos as $producto)
+                @php
+                    $isFavorite = in_array($producto->id, $favoriteProductIds ?? [], true);
+                    $precio = $producto->precio ?? $producto->price;
+                @endphp
 
-        <!-- Sección de beneficios -->
-        <section id="beneficios" class="bg-white py-16">
-            <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-                <div class="text-center">
-                    <p class="text-sm uppercase tracking-[0.3em] text-slate-400">Beneficios</p>
-                    <h2 class="mt-3 text-3xl font-bold text-slate-900">¿Por qué elegir CELU MARKET?</h2>
-                    <p class="mx-auto mt-4 max-w-2xl text-base text-slate-600">
-                        Ofrecemos entrega rápida, asesoría personalizada y atención 24/7 para que disfrutes tu compra desde el primer minuto.
-                    </p>
-                </div>
+                <article class="flex flex-col rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+                    <div class="relative flex items-center justify-center bg-slate-50 p-6">
+                        @if ($producto->featured)
+                            <span class="absolute left-4 top-4 rounded-full bg-amber-500 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
+                                Destacado
+                            </span>
+                        @endif
+                        <div class="absolute right-4 top-4">
+                            @auth
+                                <form action="{{ route('favorites.toggle', $producto) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="text-xl {{ $isFavorite ? 'text-rose-500' : 'text-slate-400 hover:text-rose-500' }}">
+                                        <i class="{{ $isFavorite ? 'fa-solid' : 'fa-regular' }} fa-heart"></i>
+                                    </button>
+                                </form>
+                            @else
+                                <button type="button" class="btn-open-auth-modal text-xl text-slate-400 hover:text-rose-500">
+                                    <i class="fa-regular fa-heart"></i>
+                                </button>
+                            @endauth
+                        </div>
+                        <img src="{{ $producto->image_url }}" alt="{{ $producto->name }}" class="h-64 w-full object-contain" />
+                    </div>
 
-                <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                    <article class="rounded-2xl border border-slate-200 p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
-                        <i class="fa-solid fa-mobile-screen-button text-3xl text-[#0d6efd]"></i>
-                        <h3 class="mt-4 text-lg font-semibold text-slate-900">Últimos modelos</h3>
-                        <p class="text-sm text-slate-600">Actualizamos el catálogo cada semana con lanzamientos globales.</p>
-                    </article>
-                    <article class="rounded-2xl border border-slate-200 p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
-                        <i class="fa-solid fa-bolt-lightning text-3xl text-emerald-500"></i>
-                        <h3 class="mt-4 text-lg font-semibold text-slate-900">Entrega rápida</h3>
-                        <p class="text-sm text-slate-600">Envíos exprés en Lima y courier asegurado a provincias.</p>
-                    </article>
-                    <article class="rounded-2xl border border-slate-200 p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
-                        <i class="fa-solid fa-credit-card text-3xl text-amber-500"></i>
-                        <h3 class="mt-4 text-lg font-semibold text-slate-900">Financiación</h3>
-                        <p class="text-sm text-slate-600">Paga en cuotas sin intereses con tarjetas seleccionadas.</p>
-                    </article>
-                    <article class="rounded-2xl border border-slate-200 p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
-                        <i class="fa-solid fa-headset text-3xl text-slate-500"></i>
-                        <h3 class="mt-4 text-lg font-semibold text-slate-900">Soporte 24/7</h3>
-                        <p class="text-sm text-slate-600">Asistencia por chat, correo y teléfono todos los días.</p>
-                    </article>
-                </div>
-            </div>
-        </section>
-
-        <!-- Sección de productos -->
-        <section id="productos" class="bg-slate-100 py-16">
-            <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-                <div class="text-center">
-                    <p class="text-sm uppercase tracking-[0.3em] text-slate-500">Catálogo</p>
-                    <h2 class="mt-3 text-3xl font-bold text-slate-900">Explora nuestros productos</h2>
-                    <p class="mx-auto mt-4 max-w-2xl text-base text-slate-600">
-                        Seleccionamos los equipos mejor valorados para que encuentres el celular ideal.
-                    </p>
-                </div>
-
-                <div class="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                    @foreach ($productos as $producto)
-                        @php
-                            $isFavorite = in_array($producto->id, $favoriteProductIds ?? [], true);
-                            $precio = $producto->precio ?? $producto->price;
-                        @endphp
-
-                        <article class="flex flex-col rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
-                            <div class="relative flex items-center justify-center bg-slate-50 p-6">
-                                @if ($producto->featured)
-                                    <span class="absolute left-4 top-4 rounded-full bg-amber-500 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
-                                        Destacado
-                                    </span>
-                                @endif
-                                <div class="absolute right-4 top-4">
-                                    @auth
-                                        <form action="{{ route('favorites.toggle', $producto) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="text-xl {{ $isFavorite ? 'text-rose-500' : 'text-slate-400 hover:text-rose-500' }}">
-                                                <i class="{{ $isFavorite ? 'fa-solid' : 'fa-regular' }} fa-heart"></i>
-                                            </button>
-                                        </form>
-                                    @else
-                                        <button type="button" class="btn-open-auth-modal text-xl text-slate-400 hover:text-rose-500">
-                                            <i class="fa-regular fa-heart"></i>
-                                        </button>
-                                    @endauth
-                                </div>
-                                <img src="{{ $producto->image_url }}" alt="{{ $producto->name }}" class="h-64 w-full object-contain" />
+                    <div class="flex flex-1 flex-col p-6">
+                        <div>
+                            <h3 class="text-lg font-semibold text-slate-900">{{ $producto->name }}</h3>
+                            <div class="mt-2 flex items-center gap-2 text-sm text-slate-500">
+                                <i class="fa-solid fa-star text-amber-400"></i>
+                                ({{ number_format($producto->rating, 1) }})
                             </div>
+                        </div>
 
-                            <div class="flex flex-1 flex-col p-6">
-                                <div>
-                                    <h3 class="text-lg font-semibold text-slate-900">{{ $producto->name }}</h3>
-                                    <div class="mt-2 flex items-center gap-2 text-sm text-slate-500">
-                                        <i class="fa-solid fa-star text-amber-400"></i>
-                                        ({{ number_format($producto->rating, 1) }})
-                                    </div>
-                                </div>
+                        <div class="mt-4 flex-1 text-sm text-slate-600 space-y-1">
+                            <div><strong>Pantalla:</strong> {{ $producto->screen }}</div>
+                            <div><strong>Procesador:</strong> {{ $producto->processor }}</div>
+                            <div><strong>RAM:</strong> {{ $producto->ram }}</div>
+                            <div><strong>Almacenamiento:</strong> {{ $producto->storage }}</div>
+                            <div><strong>Cámara:</strong> {{ $producto->camera }}</div>
+                            <div><strong>Batería:</strong> {{ $producto->battery }}</div>
+                        </div>
 
-                                <div class="mt-4 flex-1 text-sm text-slate-600">
-                                    @if (!empty($producto->description))
-                                        {!! nl2br(e($producto->description)) !!}
-                                    @else
-                                        <em class="text-slate-400">Sin descripción disponible</em>
-                                    @endif
-                                </div>
+                        <div class="mt-4 flex items-center justify-between">
+                            <span class="text-2xl font-bold text-[#1a233a]">
+                                S/ {{ number_format($precio, 2) }}
+                            </span>
+                            <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                                Stock seguro
+                            </span>
+                        </div>
 
-                                <div class="mt-4 flex items-center justify-between">
-                                    <span class="text-2xl font-bold text-[#1a233a]">
-                                        S/ {{ number_format($precio, 2) }}
-                                    </span>
-                                    <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
-                                        Stock seguro
-                                    </span>
-                                </div>
-
-                                <div class="mt-4">
-                                    <form action="{{ route('cart.add', $producto) }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1a233a] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#303a58]">
-                                            <i class="fa-solid fa-cart-plus"></i>
-                                            Agregar al carrito
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </article>
-                    @endforeach
-                </div>
-
-                <div class="mt-10">
-                    {{ $productos->links() }}
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <x-auth-iframe-modal />
-</body>
-</html>
-
+                        <div class="mt-4">
+                            <form action="{{ route('cart.add', $producto) }}" method="POST" class="flex flex-col gap-2">
+                                @csrf
+                                <input type="number" name="quantity" value="1" min="1" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-center focus:border-indigo-500 focus:ring-indigo-500">
+                                <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1a233a] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#303a58]">
+                                    <i class="fa-solid fa-cart-plus"></i>
+                                    Agregar al carrito
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </article>
+            @endforeach
+        </div>
+    </div>
+</section>

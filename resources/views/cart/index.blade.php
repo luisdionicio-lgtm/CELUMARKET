@@ -66,11 +66,16 @@
                     <p class="text-3xl font-bold text-primary">S/ {{ number_format($totals['price'], 2) }}</p>
                 </div>
             </div>
-            <div class="mt-6 flex flex-wrap gap-3">
-                <a href="{{ route('shop.index') }}" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50">Seguir comprando</a>
-                <button class="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-secondary" disabled>
-                    Próximamente: Checkout
-                </button>
+
+            <div class="mt-6 flex flex-wrap gap-3 md:justify-end">
+                <a href="{{ route('shop.index') }}" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50">
+                    Seguir comprando
+                </a>
+
+                {{-- ✅ Botón actualizado para redirigir al formulario de pago --}}
+                <a href="{{ route('cart.checkout') }}" class="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">
+                    <i class="fa-solid fa-credit-card"></i> Pagar ahora
+                </a>
             </div>
         </div>
     @endif
