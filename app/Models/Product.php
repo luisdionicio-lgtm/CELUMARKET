@@ -9,26 +9,44 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'nombre',
-        'precio',
-        'stock',
-        'name',
-        'brand',
-        'description',
-        'price',
-        'image_url',
-        'rating',
-        'storage',
-        'ram',
-        'processor',
-        'camera',
-        'screen',
-        'battery',
-        'in_stock',
-        'featured',
-    ];
+protected $fillable = [
+    'name',
+    'brand',
+    'description',
+    'price',
+    'stock',
+    'image_url',
+    'rating',
+    'storage',
+    'ram',
+    'processor',
+    'camera',
+    'screen',
+    'battery',
+    'in_stock',
+    'featured',
+];
 
+
+    public function getImageSrcAttribute()
+    {
+        $image = $this->image_url;
+
+        // 1. Si la imagen es una URL externa válida (Amazon, blogs, Falabella, etc.)
+        if (filter_var($image, FILTER_VALIDATE_URL)) {
+            return $image;
+        }
+
+        // 2. Si ya comienza con "storage/" (caso raro pero soportado)
+        if (str_starts_with($image, 'storage/')) {
+            return asset($image);
+        }
+
+        // 3. Imagen local en storage/app/public
+        return asset('storage/' . $image);
+    }
+
+    //Relaciones
     public function favoritedBy()
     {
         return $this->belongsToMany(User::class, 'favorites')->withTimestamps();

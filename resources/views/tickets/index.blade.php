@@ -119,9 +119,17 @@
     @endif
 
     @if(session('success'))
-        <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 shadow-sm">
+        <div id="ticket-flash" class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 shadow-sm transition-opacity duration-500">
             {{ session('success') }}
         </div>
+        <script>
+            setTimeout(() => {
+                const el = document.getElementById('ticket-flash');
+                if (!el) return;
+                el.style.opacity = '0';
+                setTimeout(() => el.remove(), 500);
+            }, 4000);
+        </script>
     @endif
 
     <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-md">

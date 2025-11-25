@@ -2,24 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cart;
+use App\Http\Requests\CartQuantityRequest;
+use App\Models\Comparison;
 use App\Models\Product;
+use App\Models\Reservation;
+use App\Services\CartService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Session;
 
 class CartController extends Controller
 {
-    public function index()
-    {
-        $items = $this->cartItems();
+    public function __construct(private readonly CartService $cartService) {}
 
-        $totals = [
-            'quantity' => $items->sum('quantity'),
-            'price' => $items->sum('subtotal'),
-        ];
+    public function index(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user) {
+            $this->cartService->mergeSessionToUser($user);
+        }
+
+        $items = $this->cartService->getItems($user);
+        $totals = $this->cartService->totals($items);
 
         return view('cart.index', [
             'items' => $items,
@@ -27,149 +30,85 @@ class CartController extends Controller
         ]);
     }
 
-    public function add(Request $request, Product $product)
+    public function add(CartQuantityRequest $request, Product $product)
     {
-        $quantity = max(1, (int) $request->input('quantity', 1));
+        $quantity = $request->quantity();
 
         if (!$product->in_stock) {
             return back()->with('status', 'Producto sin stock.');
         }
 
-        if (Auth::check()) {
-            $this->incrementDatabaseCart($product, $quantity);
-        } else {
-            $this->incrementSessionCart($product->id, $quantity);
-            Session::save();
+        $user = $request->user();
+
+        if ($user) {
+            $this->cartService->mergeSessionToUser($user);
         }
+
+        $this->cartService->addProduct($product, $quantity, $user);
 
         return back()->with('status', 'Producto agregado al carrito.');
     }
 
-    public function update(Request $request, Product $product)
+    public function update(CartQuantityRequest $request, Product $product)
     {
-        $quantity = max(1, (int) $request->input('quantity', 1));
+        $quantity = $request->quantity();
+        $user = $request->user();
 
-        if (Auth::check()) {
-            Cart::updateOrCreate(
-                ['user_id' => Auth::id(), 'product_id' => $product->id],
-                ['quantity' => $quantity]
-            );
-        } else {
-            $cart = Session::get('cart', []);
-            if (array_key_exists($product->id, $cart)) {
-                $cart[$product->id] = $quantity;
-                Session::put('cart', $cart);
-                Session::save();
-            }
+        if ($user) {
+            $this->cartService->mergeSessionToUser($user);
         }
+
+        $this->cartService->updateQuantity($product, $quantity, $user);
 
         return back()->with('status', 'Cantidad actualizada.');
     }
 
-    public function remove(Product $product)
+    public function remove(Request $request, Product $product)
     {
-        if (Auth::check()) {
-            Cart::where('user_id', Auth::id())
-                ->where('product_id', $product->id)
-                ->delete();
-        } else {
-            $cart = Session::get('cart', []);
-            unset($cart[$product->id]);
-            Session::put('cart', $cart);
-            Session::save();
+        $user = $request->user();
+
+        if ($user) {
+            $this->cartService->mergeSessionToUser($user);
         }
+
+        $this->cartService->removeProduct($product, $user);
 
         return back()->with('status', 'Producto eliminado del carrito.');
     }
 
-    protected function cartItems(): Collection
+    public function reserve(Product $product)
     {
-        if (Auth::check()) {
-            return Cart::with('product')
-                ->where('user_id', Auth::id())
-                ->get()
-                ->filter(fn (Cart $cart) => $cart->product)
-                ->map(fn (Cart $cart) => $this->formatCartLine($cart->product, $cart->quantity));
+        if (!auth()->check()) {
+            return redirect()->route('login');
         }
 
-        $sessionCart = Session::get('cart', []);
-        $products = Product::whereIn('id', array_keys($sessionCart))->get()->keyBy('id');
-
-        return collect($sessionCart)->map(function ($quantity, $productId) use ($products) {
-            if (!$products->has($productId)) {
-                return null;
-            }
-
-            return $this->formatCartLine($products[$productId], $quantity);
-        })->filter();
-    }
-
-    protected function formatCartLine(Product $product, int $quantity): object
-    {
-        $price = $this->resolvePrice($product);
-
-        return (object) [
-            'product' => $product,
-            'quantity' => $quantity,
-            'subtotal' => $quantity * $price,
-            'price' => $price,
-        ];
-    }
-
-    protected function resolvePrice(Product $product): float
-    {
-        return (float) ($product->precio ?? $product->price ?? 0);
-    }
-
-    protected function incrementDatabaseCart(Product $product, int $quantity): void
-    {
-        $cartItem = Cart::firstOrNew([
-            'user_id' => Auth::id(),
+        Reservation::create([
+            'user_id' => auth()->id(),
             'product_id' => $product->id,
+            'status' => 'pendiente',
         ]);
-        $cartItem->quantity = ($cartItem->exists ? $cartItem->quantity : 0) + $quantity;
-        $cartItem->save();
+
+        return back()->with('status', 'Producto reservado correctamente.');
     }
 
-    protected function incrementSessionCart(int $productId, int $quantity): void
+    public function compare(Product $product)
     {
-        $cart = Session::get('cart', []);
-        $cart[$productId] = ($cart[$productId] ?? 0) + $quantity;
-        Session::put('cart', $cart);
-        Session::save();
-    }
-
-    // ✅ Mostrar formulario de pago solo si el carrito no está vacío
-    public function checkout()
-    {
-        if ($this->cartItems()->isEmpty()) {
-            return redirect()->route('cart.index')->with('status', 'Tu carrito está vacío.');
+        if (!auth()->check()) {
+            return redirect()->route('login');
         }
 
-        return view('cart.payment');
-    }
+        $recommended = $product->marca === 'Samsung' || $product->ram >= 6;
 
-    // ✅ Procesar el pago y enviar el recibo
-    public function processPayment(Request $request)
-    {
-        $user = Auth::user();
-
-        $request->validate([
-            'method' => 'required|in:card,cash',
-            'card_number' => 'required_if:method,card',
-            'expiry' => 'required_if:method,card',
-            'cvv' => 'required_if:method,card',
-            'payment_code' => 'required_if:method,cash',
+        Comparison::create([
+            'user_id' => auth()->id(),
+            'product_id' => $product->id,
+            'recommended' => $recommended,
         ]);
 
-        Mail::raw("Gracias por tu compra en CELU MARKET. Tu voucher ha sido enviado.", function ($message) use ($user) {
-            $message->to($user->email)
-                    ->subject('Confirmación de pago - CELU MARKET');
-        });
+        $mensaje = $recommended
+            ? 'Este es el celular adecuado para ti.'
+            : 'Este celular puede no ser el m\u00e1s recomendado.';
 
-        // ✅ Vaciar carrito después del pago
-        Cart::where('user_id', $user->id)->delete();
-
-        return redirect()->route('cart.index')->with('status', 'Pago confirmado. El recibo fue enviado a tu correo registrado.');
+        return back()->with('status', $mensaje);
     }
 }

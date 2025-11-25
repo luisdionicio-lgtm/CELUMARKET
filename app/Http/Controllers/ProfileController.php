@@ -22,7 +22,6 @@ class ProfileController extends Controller
         if (!$user) {
             abort(403, 'No autorizado');
         }
-
         return view('profile.edit', [
             'user' => $user,
         ]);
@@ -38,7 +37,6 @@ class ProfileController extends Controller
         if (!$user) {
             abort(403, 'No autorizado');
         }
-
         // Rellena los campos validados en el modelo User
         $user->fill($request->validated());
 
@@ -66,7 +64,6 @@ class ProfileController extends Controller
         if (!$user) {
             abort(403, 'No autorizado');
         }
-
         Auth::logout();
 
         $user->delete();

@@ -18,6 +18,8 @@ class AdminUserSeeder extends Seeder
             [
                 'name' => 'Administrador General',
                 'password' => Hash::make('admin12345678'),
+                // Fuerza el flag de administrador para que aparezca el panel
+                'is_admin' => true,
                 'role' => 'admin',
             ]
         );

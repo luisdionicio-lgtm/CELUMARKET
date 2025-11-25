@@ -1,7 +1,8 @@
 <style>
     /* --- MODAL DE AUTENTICACIÓN (complemento Tailwind) --- */
-    .auth-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: none; align-items: flex-start; justify-content: center; padding: 3rem 1rem; z-index: 1100; }
+    .auth-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: none; align-items: center; justify-content: center; padding: 3rem 1rem; z-index: 1100; }
     .auth-modal-overlay.open { display: flex; }
+    .auth-modal { width: min(720px, calc(100vw - 1.5rem)); max-height: calc(100vh - 2rem); overflow-y: auto; }
     .auth-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; padding: .5rem; margin: 1rem; background: #f3f6fb; border-radius: 999px; }
     .auth-tab { padding: .6rem .75rem; text-align: center; border-radius: 999px; font-weight: 600; color: #334155; background: transparent; border: none; cursor: pointer; }
     .auth-tab.active { background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
@@ -94,10 +95,10 @@
                         <input id="reg_email" class="auth-input" type="email" name="email" placeholder="tu@email.com" required autocomplete="email">
                         <div style="height:.65rem"></div>
                         <label for="reg_password">Contraseña</label>
-                        <input id="reg_password" class="auth-input" type="password" name="password" required autocomplete="new-password">
+                        <input id="reg_password" class="auth-input" type="password" name="password" placeholder="********" required autocomplete="new-password">
                         <div style="height:.65rem"></div>
                         <label for="reg_password_confirmation">Confirmar contraseña</label>
-                        <input id="reg_password_confirmation" class="auth-input" type="password" name="password_confirmation" required autocomplete="new-password">
+                        <input id="reg_password_confirmation" class="auth-input" type="password" name="password_confirmation" placeholder="********" required autocomplete="new-password">
                         <div style="height:1rem"></div>
                         <button type="submit" class="btn-auth-primary">Registrarse</button>
                     </form>

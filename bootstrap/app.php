@@ -1,28 +1,26 @@
 <?php
 
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
-// Configura e inicializa la aplicación Laravel
 return Application::configure(basePath: dirname(__DIR__))
-
-    // Define las rutas principales de la aplicación
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',       // Rutas web (HTTP)
-        commands: __DIR__.'/../routes/console.php', // Comandos Artisan personalizados
-        health: '/up',                            // Ruta de verificación de estado (health check)
+        web: __DIR__.'/../routes/web.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
     )
-
-    // Configura el middleware global de la aplicación
     ->withMiddleware(function (Middleware $middleware): void {
-        // Aquí puedes registrar middlewares personalizados si lo necesitas
+        // Registrar alias para middlewares personalizados
+        $middleware->alias([
+            'is_admin' => \App\Http\Middleware\IsAdmin::class,
+        ]);
     })
-
-    // Configura el manejo de excepciones de la aplicación
     ->withExceptions(function (Exceptions $exceptions): void {
-        // Aquí puedes personalizar el reporte o renderizado de excepciones
+        // Puedes personalizar el manejo de excepciones aqui si lo deseas
     })
-
-    // Crea y devuelve la instancia de la aplicación
+    ->withSchedule(function (Schedule $schedule): void {
+        $schedule->command('payments:expire-qr')->everyMinute();
+    })
     ->create();

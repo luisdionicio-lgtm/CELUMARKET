@@ -1,71 +1,59 @@
-// Importa la configuración inicial de Laravel (incluye Axios, etc.)
+﻿// Importa la configuración inicial de Laravel (Axios, CSRF, etc.)
 import './bootstrap';
 
-// Importa Alpine.js para manejar interactividad en el frontend
+// Alpine.js
 import Alpine from 'alpinejs';
-
-// Asigna Alpine al objeto global window
 window.Alpine = Alpine;
-
-// Inicia Alpine.js
 Alpine.start();
 
-// --- INICIO SCRIPT DEL MODAL DE LOGIN ---
+// --- IMPORTA el drawer del carrito (fuera del DOMContentLoaded) ---
+import './cart-drawer';
 
-// Espera a que el DOM esté completamente cargado
-document.addEventListener("DOMContentLoaded", function() {
-
-    // Obtiene elementos del DOM relacionados con el modal
+// --- SCRIPT GLOBAL PARA EL MODAL Y SEARCH ---
+document.addEventListener('DOMContentLoaded', function () {
+    // ----------------------------
+    // MODAL DE AUTENTICACIÓN
+    // ----------------------------
     const modalOverlay = document.getElementById('auth-modal-overlay');
     const closeModalBtn = document.getElementById('auth-modal-close-btn');
     const openModalBtns = document.querySelectorAll('.btn-open-auth-modal');
 
-    // Función para ABRIR el modal
-    function openModal() {
-        if (modalOverlay) modalOverlay.style.display = 'flex';
-    }
+    const openModal = () => modalOverlay && (modalOverlay.style.display = 'flex');
+    const closeModal = () => modalOverlay && (modalOverlay.style.display = 'none');
 
-    // Función para CERRAR el modal
-    function closeModal() {
-        if (modalOverlay) modalOverlay.style.display = 'none';
-    }
-
-    // Asocia el evento de clic a cada botón que abre el modal
-    openModalBtns.forEach(btn => {
-        btn.addEventListener('click', openModal);
+    openModalBtns.forEach(btn => btn.addEventListener('click', openModal));
+    closeModalBtn?.addEventListener('click', closeModal);
+    modalOverlay?.addEventListener('click', (event) => {
+        if (event.target === modalOverlay) closeModal();
     });
 
-    // Asocia el evento de clic al botón que cierra el modal
-    if (closeModalBtn) {
-        closeModalBtn.addEventListener('click', closeModal);
-    }
-
-    // Cierra el modal si se hace clic fuera del contenido (en el overlay)
-    if (modalOverlay) {
-        modalOverlay.addEventListener('click', function(event) {
-            if (event.target === modalOverlay) {
-                closeModal();
-            }
-        });
-    }
-
-    // Manejo de pestañas dentro del modal (login / registro)
+    // Tabs dentro del modal
     const tabLinks = document.querySelectorAll('.auth-tab-link');
     const tabContents = document.querySelectorAll('.auth-tab-content');
 
-    // Asocia el evento de clic a cada pestaña
     tabLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            const tabId = this.getAttribute('data-tab');
-
-            // Quita la clase 'active' de todas las pestañas y contenidos
+        link.addEventListener('click', function () {
+            const tabId = this.dataset.tab;
             tabLinks.forEach(l => l.classList.remove('active'));
             tabContents.forEach(c => c.classList.remove('active'));
-
-            // Activa la pestaña y contenido correspondiente
             this.classList.add('active');
-            document.getElementById(tabId).classList.add('active');
+            document.getElementById(tabId)?.classList.add('active');
         });
     });
 
+    // ----------------------------
+    // BUSCADOR EN TIEMPO REAL
+    // ----------------------------
+    const searchInput = document.getElementById('searchInput');
+    const productList = document.getElementById('productList');
+
+    if (searchInput && productList) {
+        searchInput.addEventListener('input', function () {
+            const query = this.value.toLowerCase();
+            productList.querySelectorAll('.producto').forEach(producto => {
+                const nombre = producto.querySelector('.nombre')?.textContent.toLowerCase() || '';
+                producto.style.display = nombre.includes(query) ? 'block' : 'none';
+            });
+        });
+    }
 });

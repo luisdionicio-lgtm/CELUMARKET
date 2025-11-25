@@ -37,7 +37,7 @@
         </div>
 
         <a href="/tienda" class="cta-button">
-            <i class="fa-solid fa-cart-shopping"></i>
+
             Comenzar a comprar
             <i class="fa-solid fa-sparkles"></i>
         </a>

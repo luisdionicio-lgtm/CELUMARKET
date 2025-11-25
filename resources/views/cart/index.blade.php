@@ -11,7 +11,7 @@
             <p class="text-sm text-slate-500">Productos guardados para tu próxima compra.</p>
         </div>
         <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-600">
-            {{ $totals['quantity'] }} artículo(s) · Total S/ {{ number_format($totals['price'], 2) }}
+            {{ $totals['quantity'] }} artículo(s) — Total S/ {{ number_format($totals['price'], 2) }}
         </div>
     </div>
 
@@ -36,6 +36,7 @@
                             <p class="text-sm text-slate-500">S/ {{ number_format($line->price, 2) }} c/u</p>
                         </div>
                     </div>
+
                     <div class="flex flex-col gap-3 text-sm text-slate-600 md:items-end">
                         <form action="{{ route('cart.update', $line->product) }}" method="POST" class="flex items-center gap-2">
                             @csrf
@@ -44,12 +45,26 @@
                             <input type="number" name="quantity" min="1" value="{{ $line->quantity }}" class="w-20 rounded-lg border border-slate-300 px-2 py-1 text-center focus:border-indigo-500 focus:ring-indigo-500">
                             <button type="submit" class="text-indigo-600 hover:underline">Actualizar</button>
                         </form>
+
                         <p class="font-semibold text-primary">Subtotal: S/ {{ number_format($line->subtotal, 2) }}</p>
-                        <form action="{{ route('cart.remove', $line->product) }}" method="POST" onsubmit="return confirm('¿Eliminar este producto del carrito?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-rose-600 hover:underline">Eliminar</button>
-                        </form>
+
+                        <div class="flex flex-wrap gap-3">
+                            <form action="{{ route('cart.remove', $line->product) }}" method="POST" onsubmit="return confirm('¿Eliminar este producto del carrito?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-rose-600 hover:underline">Eliminar</button>
+                            </form>
+
+                            <form action="{{ route('cart.reserve', $line->product) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="text-amber-600 hover:underline">Reservar producto</button>
+                            </form>
+
+                            <form action="{{ route('cart.compare', $line->product) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="text-indigo-600 hover:underline">Comparar producto</button>
+                            </form>
+                        </div>
                     </div>
                 </article>
             @endforeach
@@ -72,8 +87,7 @@
                     Seguir comprando
                 </a>
 
-                {{-- ✅ Botón actualizado para redirigir al formulario de pago --}}
-                <a href="{{ route('cart.checkout') }}" class="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">
+                <a href="{{ route('checkout.show') }}" class="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">
                     <i class="fa-solid fa-credit-card"></i> Pagar ahora
                 </a>
             </div>
