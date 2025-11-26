@@ -7,6 +7,9 @@ use App\Models\Reservation;
 
 class ReservationController extends Controller
 {
+    /**
+     * Mostrar todas las reservas del usuario autenticado
+     */
     public function index()
     {
         $reservas = Reservation::with('product')
@@ -17,6 +20,24 @@ class ReservationController extends Controller
         return view('reservations.index', compact('reservas'));
     }
 
+    /**
+     * Crear una nueva reserva para un producto
+     */
+    public function store($productId)
+    {
+        Reservation::create([
+            'user_id'    => auth()->id(),
+            'product_id' => $productId,
+            'status'     => 'pendiente'
+        ]);
+
+        return redirect()->route('reservations.index')
+            ->with('status', 'Producto reservado correctamente.');
+    }
+
+    /**
+     * Cancelar una reserva y redirigir al carrito
+     */
     public function destroy(Reservation $reservation)
     {
         // Verifica que la reserva pertenezca al usuario autenticado
@@ -24,8 +45,11 @@ class ReservationController extends Controller
             abort(403);
         }
 
+        // Elimina la reserva
         $reservation->delete();
 
-        return back()->with('status', 'Reserva cancelada correctamente.');
+        // Redirige al carrito con mensaje de confirmación
+        return redirect()->route('cart.index')
+            ->with('status', 'Reserva cancelada y redirigido al carrito.');
     }
 }
