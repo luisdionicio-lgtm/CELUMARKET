@@ -15,6 +15,7 @@
         </div>
     </div>
 
+    {{-- ✅ Mensaje de confirmación (ej: reserva cancelada y redirigido al carrito) --}}
     @if(session('status'))
         <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 shadow-sm">
             {{ session('status') }}
@@ -23,7 +24,8 @@
 
     @if($items->isEmpty())
         <div class="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500 shadow-sm">
-            No tienes productos en tu carrito. <a href="{{ route('shop.index') }}" class="text-indigo-600 hover:underline">Explora la tienda</a>.
+            No tienes productos en tu carrito. 
+            <a href="{{ route('shop.index') }}" class="text-indigo-600 hover:underline">Explora la tienda</a>.
         </div>
     @else
         <div class="space-y-4">
@@ -38,6 +40,7 @@
                     </div>
 
                     <div class="flex flex-col gap-3 text-sm text-slate-600 md:items-end">
+                        {{-- Actualizar cantidad --}}
                         <form action="{{ route('cart.update', $line->product) }}" method="POST" class="flex items-center gap-2">
                             @csrf
                             @method('PATCH')
@@ -49,17 +52,20 @@
                         <p class="font-semibold text-primary">Subtotal: S/ {{ number_format($line->subtotal, 2) }}</p>
 
                         <div class="flex flex-wrap gap-3">
+                            {{-- Eliminar producto --}}
                             <form action="{{ route('cart.remove', $line->product) }}" method="POST" onsubmit="return confirm('¿Eliminar este producto del carrito?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-rose-600 hover:underline">Eliminar</button>
                             </form>
 
+                            {{-- Reservar producto desde carrito --}}
                             <form action="{{ route('cart.reserve', $line->product) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="text-amber-600 hover:underline">Reservar producto</button>
                             </form>
 
+                            {{-- Comparar producto --}}
                             <form action="{{ route('cart.compare', $line->product) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="text-indigo-600 hover:underline">Comparar producto</button>
@@ -70,6 +76,7 @@
             @endforeach
         </div>
 
+        {{-- Resumen del carrito --}}
         <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>

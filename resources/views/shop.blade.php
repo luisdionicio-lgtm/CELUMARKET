@@ -313,33 +313,43 @@
                                     Stock seguro
                                 </span>
                             </div>
+<div class="mt-4">
+    {{-- Agregar al carrito --}}
+    <form action="{{ route('cart.add', $producto) }}" method="POST" class="flex flex-col gap-2">
+        @csrf
+        <input type="number" name="quantity" value="1" min="1" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-center focus:border-indigo-500 focus:ring-indigo-500">
+        <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1a233a] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#303a58]">
+            <i class="fa-solid fa-cart-plus"></i>
+            Agregar al carrito
+        </button>
+    </form>
 
-                            <div class="mt-4">
-                                <form action="{{ route('cart.add', $producto) }}" method="POST" class="flex flex-col gap-2">
-                                    @csrf
-                                    <input type="number" name="quantity" value="1" min="1" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-center focus:border-indigo-500 focus:ring-indigo-500">
-                                    <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1a233a] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#303a58]">
-                                        <i class="fa-solid fa-cart-plus"></i>
-                                        Agregar al carrito
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </article>
-                    @endforeach
-                </div>
-            </div>
-        </section>
-    </main>
+    {{-- Reservar celular --}}
+    @auth
+    <form action="{{ route('reservations.store', $producto->id) }}" method="POST" class="mt-2">
+        @csrf
+        <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700">
+            <i class="fa-solid fa-bookmark"></i>
+            Reservar celular
+        </button>
+    </form>
+    @endauth
+</div>
+</div> {{-- cierre del flex-1 --}}
+</article>
+@endforeach
+</div> {{-- cierre del grid --}}
+</div> {{-- cierre del contenedor --}}
+</section>
+</main>
 
-    @include('components.cart-drawer')
+@include('components.cart-drawer')
 
-    <script>
-        window.__cartItems = @json($cartItems);
-    </script>
+<script>
+    window.__cartItems = @json($cartItems);
+</script>
 
-    @include('components.footer')
+@include('components.footer')
 
 </body>
-
 </html>

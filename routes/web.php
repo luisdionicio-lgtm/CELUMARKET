@@ -27,6 +27,7 @@ Route::get('/tienda', [ShopPageController::class, 'index'])->name('shop.index');
 // ---------------------------------------------------------------------------
 // RESERVAS (public)
 // ---------------------------------------------------------------------------
+// Vista de reservas (solo listado)
 Route::get('/reservas', [ReservationController::class, 'index'])->name('reservations.index');
 
 
@@ -98,7 +99,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('tickets', TicketController::class);
     Route::get('/support', [TicketController::class, 'index'])->name('support.index');
 
-    // Cancelar reserva
+    // RESERVAS (crear y cancelar)
+    Route::post('/reservas/{product}', [ReservationController::class, 'store'])->name('reservations.store');
     Route::delete('/reservas/{reservation}', [ReservationController::class, 'destroy'])->name('reservations.destroy');
 
     // Comparaciones
