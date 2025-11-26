@@ -12,7 +12,7 @@
 <!-- Drawer del carrito -->
 <aside
     id="cart-drawer"
-    class="fixed right-0 top-0 z-50 flex h-full w-full max-w-[450px] translate-x-full flex-col border-l border-gray-200 bg-white p-6 shadow-2xl transition-transform duration-300 ease-out"
+    class="fixed right-0 top-0 z-50 flex h-full w-full max-w-[450px] translate-x-full flex-col overflow-hidden border-l border-gray-200 bg-white p-6 shadow-2xl transition-transform duration-300 ease-out"
     aria-hidden="true"
 >
     <button
@@ -57,8 +57,9 @@
         </button>
     </div>
 
-    <div data-cart-panel="cart">
-        <div class="mt-6 hidden flex-1 overflow-y-auto space-y-4" id="cart-item-list"></div>
+    <div class="mt-6 flex-1 min-h-0 overflow-y-auto">
+        <div data-cart-panel="cart">
+        <div class="mt-6 hidden space-y-4" id="cart-item-list"></div>
 
         <div
             class="mt-6 flex h-full flex-col items-center justify-center text-center text-gray-500"
@@ -78,7 +79,7 @@
 
     <div
         data-cart-panel="compare"
-        class="mt-6 hidden flex-1 overflow-y-auto"
+        class="mt-6 hidden"
         id="cart-compare-panel"
     >
         <div
@@ -87,6 +88,8 @@
         >
             <p class="text-sm text-gray-500">Agrega productos para comparar sus características.</p>
         </div>
+    </div>
+
     </div>
 
     <div class="border-t border-gray-200 pt-4">

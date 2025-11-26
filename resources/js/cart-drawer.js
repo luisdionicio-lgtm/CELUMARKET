@@ -155,7 +155,7 @@
                         <div class="flex items-center justify-between text-sm text-gray-600">
                             <span>${formatCurrency(item.price * item.quantity)}</span>
                             <button class="text-rose-500" data-remove="${item.id}">
-                                <i class="fa-solid fa-trash"></i>
+                                <i class="fa-solid fa-trash pointer-events-none"></i>
                             </button>
                         </div>
                     </div>
@@ -229,10 +229,23 @@
         if (e.key === 'Escape') closeDrawer();
     });
 
-    document.addEventListener('click', (e) => {
-        if (e.target.dataset.inc) adjustQuantity(Number(e.target.dataset.inc), 1);
-        if (e.target.dataset.dec) adjustQuantity(Number(e.target.dataset.dec), -1);
-        if (e.target.dataset.remove) removeItem(Number(e.target.dataset.remove));
+    list.addEventListener('click', (e) => {
+        const incBtn = e.target.closest('[data-inc]');
+        if (incBtn) {
+            adjustQuantity(Number(incBtn.dataset.inc), 1);
+            return;
+        }
+
+        const decBtn = e.target.closest('[data-dec]');
+        if (decBtn) {
+            adjustQuantity(Number(decBtn.dataset.dec), -1);
+            return;
+        }
+
+        const removeBtn = e.target.closest('[data-remove]');
+        if (removeBtn) {
+            removeItem(Number(removeBtn.dataset.remove));
+        }
     });
 
     tabButtons.forEach((tab) =>
