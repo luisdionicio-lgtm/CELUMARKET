@@ -277,3 +277,35 @@ body.shop-page {
     margin-left: 0.5rem;
     align-self: flex-start;
 }
+
+/* Carrusel */
+.brand-track {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    width: max-content;
+    animation: brandScroll 20s linear infinite;
+    padding: 1rem 0;
+}
+
+.brand-logo {
+    height: 50px;         
+    width: auto;
+    object-fit: contain;
+    opacity: 0.8;
+    transition: opacity .3s ease, transform .3s ease;
+}
+
+.brand-logo {
+    height: 80px;  
+    width: auto;
+    object-fit: contain;
+    opacity: 0.85;
+    transition: opacity .3s ease, transform .3s ease;
+}
+
+@keyframes brandScroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+

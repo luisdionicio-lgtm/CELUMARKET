@@ -245,6 +245,42 @@
             </div>
         </section>
 
+        <section class="py-14 bg-white">
+            <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+
+                <h2 class="text-center text-2xl font-bold text-slate-900 mb-10">
+                    Marcas con las que trabajamos
+                </h2>
+
+                <div class="overflow-hidden relative">
+                    <div class="brand-track">
+
+                        @php
+                            $logos = [
+                                "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg",
+                                "https://static.vecteezy.com/system/resources/previews/020/336/037/non_2x/samsung-logo-samsung-icon-free-free-vector.jpg",
+                                "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Xiaomi_logo_%282021-%29.svg/1024px-Xiaomi_logo_%282021-%29.svg.png",
+                                "https://static.vecteezy.com/system/resources/previews/020/927/577/non_2x/huawei-logo-brand-phone-symbol-with-name-black-design-china-mobile-illustration-free-vector.jpg",
+                                "https://1000marcas.net/wp-content/uploads/2020/01/Motorola-Logo-.png",
+                                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTUgt1LmPwhKFWtm8ezuJD9NzYV2Q4TYx28A&s",
+                            ];
+                        @endphp
+
+                        {{-- Primera pasada --}}
+                        @foreach($logos as $logo)
+                            <img src="{{ $logo }}" class="brand-logo" />
+                        @endforeach
+
+                        {{-- Segunda pasada (para loop infinito) --}}
+                        @foreach($logos as $logo)
+                            <img src="{{ $logo }}" class="brand-logo" />
+                        @endforeach
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Sección de productos -->
         <section id="productos" class="bg-slate-100 py-16">
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
