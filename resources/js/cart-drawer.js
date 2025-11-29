@@ -24,6 +24,45 @@
     };
     window.__cartItems = state.items;
 
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+    const buildHeaders = (extra = {}) => ({
+        'X-Requested-With': 'XMLHttpRequest',
+        ...(csrfToken ? { 'X-CSRF-TOKEN': csrfToken } : {}),
+        ...extra,
+    });
+
+    const cartUrl = (productId) => `/cart/${productId}`;
+
+    const persistQuantity = async (productId, quantity) => {
+        const response = await fetch(cartUrl(productId), {
+            method: 'PATCH',
+            credentials: 'same-origin',
+            headers: buildHeaders({ 'Content-Type': 'application/json' }),
+            body: JSON.stringify({ quantity }),
+        });
+
+        if (response.status >= 400) {
+            throw new Error('No se pudo actualizar el carrito');
+        }
+    };
+
+    const persistRemoval = async (productId) => {
+        const response = await fetch(cartUrl(productId), {
+            method: 'DELETE',
+            credentials: 'same-origin',
+            headers: buildHeaders(),
+        });
+
+        if (response.status >= 400) {
+            throw new Error('No se pudo eliminar el producto');
+        }
+    };
+
+    const handleError = (message) => {
+        console.error(message);
+        alert(message);
+    };
+
     const formatCurrency = (value) =>
         new Intl.NumberFormat('es-PE', {
             style: 'currency',
@@ -179,18 +218,39 @@
         renderCompareTable();
     };
 
-    const adjustQuantity = (id, delta) => {
+    const adjustQuantity = async (id, delta) => {
         const item = state.items.find((i) => i.id === id);
         if (!item) return;
 
-        item.quantity = Math.max(1, item.quantity + delta);
-        renderItems();
+        const nextQuantity = Math.max(0, item.quantity + delta);
+
+        if (nextQuantity < 1) {
+            await removeItem(id);
+            return;
+        }
+
+        try {
+            await persistQuantity(id, nextQuantity);
+            item.quantity = nextQuantity;
+            renderItems();
+        } catch (error) {
+            handleError('No se pudo actualizar la cantidad. Intenta nuevamente.');
+        }
     };
 
-    const removeItem = (id) => {
-        state.items = state.items.filter((i) => i.id !== id);
-        window.__cartItems = state.items;
-        renderItems();
+    const removeItem = async (id) => {
+        const previous = [...state.items];
+
+        try {
+            await persistRemoval(id);
+            state.items = state.items.filter((i) => i.id !== id);
+            window.__cartItems = state.items;
+            renderItems();
+        } catch (error) {
+            state.items = previous;
+            window.__cartItems = state.items;
+            handleError('No se pudo eliminar el producto del carrito.');
+        }
     };
 
     const openDrawer = () => {

@@ -60,6 +60,10 @@ class CartController extends Controller
 
         $this->cartService->updateQuantity($product, $quantity, $user);
 
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true]);
+        }
+
         return back()->with('status', 'Cantidad actualizada.');
     }
 
@@ -72,6 +76,10 @@ class CartController extends Controller
         }
 
         $this->cartService->removeProduct($product, $user);
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true]);
+        }
 
         return back()->with('status', 'Producto eliminado del carrito.');
     }

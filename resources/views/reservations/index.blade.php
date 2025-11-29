@@ -8,9 +8,21 @@
 
     {{-- ✅ Mensaje de confirmación (reserva creada o cancelada) --}}
     @if(session('status'))
-        <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 shadow-sm">
+        <div id="reservation-status" class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 shadow-sm">
             {{ session('status') }}
         </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const flash = document.getElementById('reservation-status');
+                if (!flash) return;
+
+                setTimeout(() => {
+                    flash.style.transition = 'opacity 0.5s ease';
+                    flash.style.opacity = '0';
+                    setTimeout(() => flash.remove(), 600);
+                }, 4000);
+            });
+        </script>
     @endif
 
     @if($reservas->isEmpty())
