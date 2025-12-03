@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
@@ -306,7 +306,7 @@
 <!-- Drawer del carrito -->
 <aside
     id="cart-drawer"
-    class="fixed right-0 top-0 z-50 flex h-full w-full max-w-[450px] translate-x-full flex-col border-l border-gray-200 bg-white p-6 shadow-2xl transition-transform duration-300 ease-out"
+    class="fixed right-0 top-0 z-50 flex h-full w-full max-w-[450px] translate-x-full flex-col overflow-hidden border-l border-gray-200 bg-white p-6 shadow-2xl transition-transform duration-300 ease-out"
     aria-hidden="true"
 >
     <!-- Boton cerrar -->
@@ -348,31 +348,70 @@
         <button
             type="button"
             class="flex-1 rounded-lg py-2 text-center transition hover:text-gray-900"
+            data-cart-tab="compare"
         >
             Comparar
         </button>
+        <button
+            type="button"
+            class="flex-1 rounded-lg py-2 text-center transition hover:text-gray-900"
+            data-cart-tab="reservations"
+        >
+            Reservas
+        </button>
     </div>
 
-    <!-- Lista de items -->
-    <div
-        class="mt-6 {{ $cartItems->isEmpty() ? 'hidden' : '' }} flex-1 overflow-y-auto space-y-4"
-        id="cart-item-list"
-    ></div>
-
-    <!-- Estado vacio -->
-    <div
-        class="mt-6 flex h-full flex-col items-center justify-center text-center text-gray-500 {{ $cartItems->isEmpty() ? '' : 'hidden' }}"
-        id="cart-empty-state"
-    >
-        <div class="rounded-full bg-gray-100 p-6 text-4xl text-gray-300">
-            <svg class="h-10 w-10" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h15l-1.5 9h-12z" />
-                <circle cx="9" cy="19" r="1.5" />
-                <circle cx="17" cy="19" r="1.5" />
-            </svg>
+    <div class="mt-6 flex-1 min-h-0 overflow-y-auto">
+        <div data-cart-panel="cart" class="{{ $cartItems->isEmpty() ? 'hidden' : '' }}">
+            <div class="mt-6 space-y-4" id="cart-item-list"></div>
         </div>
-        <p class="mt-3 text-lg font-semibold text-gray-900">Tu carrito está vacío</p>
-        <p class="text-sm text-gray-500">Agrega productos para comenzar.</p>
+
+        <div
+            class="mt-6 flex h-full flex-col items-center justify-center text-center text-gray-500 {{ $cartItems->isEmpty() ? '' : 'hidden' }}"
+            id="cart-empty-state"
+            data-cart-panel="cart-empty"
+        >
+            <div class="rounded-full bg-gray-100 p-6 text-4xl text-gray-300">
+                <svg class="h-10 w-10" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h15l-1.5 9h-12z" />
+                    <circle cx="9" cy="19" r="1.5" />
+                    <circle cx="17" cy="19" r="1.5" />
+                </svg>
+            </div>
+            <p class="mt-3 text-lg font-semibold text-gray-900">Tu carrito está vacío</p>
+            <p class="text-sm text-gray-500">Agrega productos para comenzar.</p>
+        </div>
+
+        <div
+            data-cart-panel="compare"
+            class="mt-6 hidden"
+            id="cart-compare-panel"
+        >
+            <div
+                id="cart-compare-table"
+                class="h-full w-full overflow-x-auto rounded-2xl border border-gray-200 bg-gray-50 p-4"
+            >
+                <p class="text-sm text-gray-500">Agrega productos para comparar sus características.</p>
+            </div>
+        </div>
+
+        <div
+            data-cart-panel="reservations"
+            class="mt-6 hidden"
+        >
+            <div class="flex h-full flex-col gap-3 rounded-2xl border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700">
+                <div class="flex items-center gap-2 text-gray-900">
+                    <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                    Reservas activas por 48h al pagar el 50%.
+                </div>
+                <p class="text-gray-600">
+                    Gestiona tus reservas y completa el pago del saldo restante antes de que venzan. Si expiran, se libera el stock y se reembolsa el adelanto.
+                </p>
+                <a href="{{ route('reservations.index') }}" class="inline-flex items-center justify-center rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-black">
+                    Ir a mis reservas
+                </a>
+            </div>
+        </div>
     </div>
 
     <!-- Footer del carrito -->
@@ -396,6 +435,51 @@
 
 <script>
     window.__cartItems = @json($cartItems);
+</script>
+
+<!-- Tabs del carrito (carrito / comparar / reservas) -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tabButtons = Array.from(document.querySelectorAll('[data-cart-tab]'));
+        const panels = Array.from(document.querySelectorAll('[data-cart-panel]'));
+
+        const setTab = (tab) => {
+            tabButtons.forEach(btn => {
+                const isActive = btn.getAttribute('data-cart-tab') === tab;
+                btn.classList.toggle('bg-white', isActive);
+                btn.classList.toggle('text-gray-900', isActive);
+                btn.classList.toggle('shadow-sm', isActive);
+            });
+
+            panels.forEach(panel => {
+                const name = panel.getAttribute('data-cart-panel');
+                if (tab === 'cart') {
+                    if (name === 'cart' || name === 'cart-empty') {
+                        const wasHidden = panel.getAttribute('data-was-hidden');
+                        if (wasHidden !== null) {
+                            panel.classList.toggle('hidden', wasHidden === 'true');
+                            panel.removeAttribute('data-was-hidden');
+                        }
+                        return;
+                    }
+                    panel.classList.add('hidden');
+                } else {
+                    if (name === 'cart' || name === 'cart-empty') {
+                        panel.setAttribute('data-was-hidden', panel.classList.contains('hidden') ? 'true' : 'false');
+                        panel.classList.add('hidden');
+                    } else {
+                        panel.classList.toggle('hidden', name !== tab);
+                    }
+                }
+            });
+        };
+
+        tabButtons.forEach(btn => {
+            btn.addEventListener('click', () => setTab(btn.getAttribute('data-cart-tab')));
+        });
+
+        setTab('cart');
+    });
 </script>
 
 <!-- Lógica del carrito off-canvas -->

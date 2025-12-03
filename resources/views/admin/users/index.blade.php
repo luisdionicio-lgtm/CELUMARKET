@@ -30,11 +30,15 @@
                         <td class="px-4 py-3 capitalize">{{ $user->role ?? 'user' }}</td>
                         <td class="px-4 py-3 text-slate-500">{{ $user->created_at?->format('d/m/Y') }}</td>
                         <td class="px-4 py-3 text-right space-x-2">
-                            <a href="{{ route('admin.users.edit', $user) }}" class="text-indigo-600 hover:underline">Editar</a>
+                            <a href="{{ route('admin.users.edit', $user) }}" class="inline-flex items-center gap-1 rounded-lg bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-700 ring-1 ring-indigo-100 hover:bg-indigo-100">
+                                <i class="fa-solid fa-pen-to-square"></i> Editar
+                            </a>
                             <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline" onsubmit="return confirm('¿Eliminar este usuario?');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-rose-600 hover:underline">Eliminar</button>
+                                <button type="submit" class="inline-flex items-center gap-1 rounded-lg bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 ring-1 ring-rose-100 hover:bg-rose-100">
+                                    <i class="fa-solid fa-trash"></i> Eliminar
+                                </button>
                             </form>
                         </td>
                     </tr>

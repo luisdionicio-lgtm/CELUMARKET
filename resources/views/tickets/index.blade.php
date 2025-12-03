@@ -9,6 +9,12 @@
         'resolved' => 'Resueltos',
         'closed' => 'Cerrados',
     ];
+    $statusLabels = [
+        'open' => 'Abierto',
+        'in-progress' => 'En proceso',
+        'resolved' => 'Resuelto',
+        'closed' => 'Cerrado',
+    ];
     $priorityColors = [
         'high' => 'bg-rose-100 text-rose-800',
         'medium' => 'bg-amber-100 text-amber-800',
@@ -142,7 +148,7 @@
                                             Prioridad {{ ucfirst($ticket->priority) }}
                                         </span>
                                         <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
-                                            {{ ucfirst(str_replace('-', ' ', $ticket->status)) }}
+                                            {{ $statusLabels[$ticket->status] ?? ucfirst(str_replace('-', ' ', $ticket->status)) }}
                                         </span>
                                     </div>
                                     <h3 class="mt-3 text-lg font-semibold text-secondary">{{ $ticket->subject }}</h3>

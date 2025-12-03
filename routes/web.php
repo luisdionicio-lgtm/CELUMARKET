@@ -37,7 +37,10 @@ Route::get('/reservas', [ReservationController::class, 'index'])->name('reservat
 // ---------------------------------------------------------------------------
 // SHOPPING CART
 // ---------------------------------------------------------------------------
-Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::get('/cart', function () {
+    // Redirige al overlay del carrito en la tienda con el flag ?cart=1
+    return redirect()->route('shop.index', ['cart' => 1]);
+})->name('cart.index');
 Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
 Route::patch('/cart/{product}', [CartController::class, 'update'])->name('cart.update');
 Route::delete('/cart/{product}', [CartController::class, 'remove'])->name('cart.remove');

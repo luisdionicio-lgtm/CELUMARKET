@@ -19,7 +19,7 @@
 @section('content')
 <div class="max-w-4xl mx-auto space-y-6">
     <a href="{{ route('tecnico.dashboard') }}" class="text-sm text-indigo-600 hover:underline">
-        ← Volver al panel técnico
+        Volver al panel técnico
     </a>
 
     <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg">
@@ -30,7 +30,7 @@
                 <p class="text-sm text-slate-500">Cliente: {{ $ticket->user?->name ?? 'N/D' }} | Email: {{ $ticket->user?->email ?? 'N/D' }}</p>
             </div>
             <div class="rounded-full bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white">
-                Estado: {{ ucfirst(str_replace('-', ' ', $ticket->status)) }}
+                Estado: {{ $statusOptions[$ticket->status] ?? ucfirst(str_replace('-', ' ', $ticket->status)) }}
             </div>
         </div>
 

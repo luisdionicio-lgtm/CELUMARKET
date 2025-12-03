@@ -48,25 +48,35 @@
                     {{-- Perfil / Admin / Técnico --}}
                     @auth
                         @if(auth()->user()->role === 'admin')
-                            <div class="relative group">
-                                <button class="inline-flex h-full items-center gap-2 text-gray-300 hover:text-primary font-semibold">
+                            <div x-data="{ open: false }" class="relative">
+                                <button
+                                    @click="open = !open"
+                                    @keydown.escape.window="open = false"
+                                    class="inline-flex h-full items-center gap-2 rounded-full bg-white/5 px-3 py-2 text-slate-100 font-semibold transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/40"
+                                >
                                     <i class="fa-solid fa-user-shield"></i>
                                     Panel administrador
-                                    <i class="fa-solid fa-chevron-down text-xs"></i>
+                                    <i class="fa-solid fa-chevron-down text-xs transition" :class="open ? 'rotate-180' : ''"></i>
                                 </button>
 
-                                <div class="absolute left-0 z-20 hidden w-48 rounded-lg border border-slate-200 bg-white py-2 shadow-lg group-hover:block">
-                                    <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                                        Mi perfil
+                                <div
+                                    x-cloak
+                                    x-show="open"
+                                    x-transition.origin.top.left
+                                    @click.outside="open = false"
+                                    class="absolute left-0 z-20 mt-2 w-56 rounded-2xl border border-slate-200 bg-white/98 py-2 shadow-2xl ring-1 ring-slate-100"
+                                >
+                                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-50">
+                                        <i class="fa-solid fa-id-card text-slate-500"></i> Mi perfil
                                     </a>
-                                    <a href="{{ route('admin.products.index') }}" class="block px-4 py-2 text-sm hover:bg-gray-100">
-                                        Gestionar productos
+                                    <a href="{{ route('admin.products.index') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                        <i class="fa-solid fa-box text-slate-500"></i> Gestionar productos
                                     </a>
-                                    <a href="{{ route('admin.orders.index') }}" class="block px-4 py-2 text-sm hover:bg-gray-100">
-                                        Gestionar pedidos
+                                    <a href="{{ route('admin.orders.index') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                        <i class="fa-solid fa-receipt text-slate-500"></i> Gestionar pedidos
                                     </a>
-                                    <a href="{{ route('admin.users.index') }}" class="block px-4 py-2 text-sm hover:bg-gray-100">
-                                        Gestionar usuarios
+                                    <a href="{{ route('admin.users.index') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                        <i class="fa-solid fa-users text-slate-500"></i> Gestionar usuarios
                                     </a>
                                 </div>
                             </div>

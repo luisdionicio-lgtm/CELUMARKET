@@ -84,7 +84,7 @@
                             <div class="space-y-2">
                                 <div class="flex flex-wrap items-center gap-2 text-xs font-semibold">
                                     <span class="rounded-full bg-slate-100 px-3 py-1 text-slate-600">#{{ $ticket->id }}</span>
-                                    <span class="rounded-full bg-slate-900 px-3 py-1 text-white">{{ ucfirst(str_replace('-', ' ', $ticket->status)) }}</span>
+                                    <span class="rounded-full bg-slate-900 px-3 py-1 text-white">{{ $statusLabels[$ticket->status] ?? ucfirst(str_replace('-', ' ', $ticket->status)) }}</span>
                                     <span class="rounded-full px-3 py-1 {{ $priorityLabels[$ticket->priority]['classes'] ?? 'bg-slate-100 text-slate-700' }}">
                                         Prioridad {{ $priorityLabels[$ticket->priority]['label'] ?? $ticket->priority }}
                                     </span>
