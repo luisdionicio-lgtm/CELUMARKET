@@ -19,6 +19,7 @@
                     <th class="px-4 py-2 text-left">Stock</th>
                     <th class="px-4 py-2 text-left">Rating</th>
                     <th class="px-4 py-2 text-left">Destacado</th>
+                    <th class="px-4 py-2 text-left">Estado</th>
                     <th class="px-4 py-2 text-left">Acciones</th>
                 </tr>
             </thead>
@@ -29,7 +30,7 @@
                         <td class="px-4 py-2">{{ $product->brand }}</td>
                         <td class="px-4 py-2">S/ {{ number_format($product->price, 2) }}</td>
                         <td class="px-4 py-2">{{ $product->stock }}</td>
-                        <td class="px-4 py-2">⭐ {{ $product->rating }}</td>
+                        <td class="px-4 py-2">★ {{ $product->rating }}</td>
                         <td class="px-4 py-2">
                             @if($product->featured)
                                 <span class="text-green-600 font-semibold">Sí</span>
@@ -37,17 +38,38 @@
                                 <span class="text-gray-500">No</span>
                             @endif
                         </td>
+                        <td class="px-4 py-2">
+                            <span class="rounded-full px-3 py-1 text-xs font-semibold {{ $product->active ? 'bg-green-100 text-green-700' : 'bg-slate-200 text-slate-600' }}">
+                                {{ $product->active ? 'Activo' : 'Inactivo' }}
+                            </span>
+                        </td>
                         <td class="px-4 py-2 flex gap-2">
                             <a href="{{ route('admin.products.edit', $product) }}" class="text-yellow-500 hover:text-yellow-600">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
-                            <form action="{{ route('admin.products.destroy', $product) }}" method="POST" onsubmit="return confirm('¿Eliminar este producto?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-700">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </form>
+                            @if($product->active)
+                                <form action="{{ route('admin.products.destroy', $product) }}" method="POST" onsubmit="return confirm('¿Desactivar este producto?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:text-red-700">
+                                        <i class="fa-solid fa-power-off"></i>
+                                    </button>
+                                </form>
+                            @else
+                                <form action="{{ route('admin.products.update', $product) }}" method="POST" onsubmit="return confirm('¿Activar este producto?')">
+                                    @csrf
+                                    @method('PUT')
+                                    <input type="hidden" name="active" value="1">
+                                    <input type="hidden" name="name" value="{{ $product->name }}">
+                                    <input type="hidden" name="brand" value="{{ $product->brand }}">
+                                    <input type="hidden" name="price" value="{{ $product->price }}">
+                                    <input type="hidden" name="stock" value="{{ $product->stock }}">
+                                    <input type="hidden" name="rating" value="{{ $product->rating }}">
+                                    <button type="submit" class="text-emerald-600 hover:text-emerald-700">
+                                        <i class="fa-solid fa-rotate-left"></i>
+                                    </button>
+                                </form>
+                            @endif
                         </td>
                     </tr>
                 @endforeach

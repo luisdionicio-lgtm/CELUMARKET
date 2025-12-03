@@ -4,8 +4,8 @@
 <section class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
 
     <a href="{{ route('admin.dashboard') }}"
-       class="inline-flex items-center mb-6 px-4 py-2 text-sm font-semibold bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition">
-        <i class="fa-solid fa-arrow-left mr-2"></i> Volver al panel
+       class="inline-flex items-center gap-2 mb-6 px-4 py-2 text-sm font-semibold text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition">
+        <i class="fa-solid fa-arrow-left"></i> Volver al panel
     </a>
 
     <h2 class="text-2xl font-bold text-slate-900 mb-6">Perfil de administrador</h2>

@@ -42,6 +42,13 @@
         </div>
 
         <div>
+            <label class="inline-flex items-center">
+                <input type="checkbox" name="active" {{ $product->active ? 'checked' : '' }} class="form-checkbox">
+                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Producto activo</span>
+            </label>
+        </div>
+
+        <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Imagen actual</label>
             @if($product->image_url)
                 <img src="{{ asset('storage/' . $product->image_url) }}" alt="{{ $product->name }}" class="w-32 h-32 object-cover rounded mb-2">

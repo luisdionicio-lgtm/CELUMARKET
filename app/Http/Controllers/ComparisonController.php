@@ -10,6 +10,7 @@ class ComparisonController extends Controller
     {
         $comparaciones = Comparison::with('product')
             ->where('user_id', auth()->id())
+            ->whereHas('product', fn ($query) => $query->where('active', true))
             ->latest()
             ->get();
 

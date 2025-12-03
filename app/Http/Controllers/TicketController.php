@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ticket;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class TicketController extends Controller
@@ -11,7 +12,7 @@ class TicketController extends Controller
     {
         $status = $request->query('status');
 
-        $tickets = Ticket::with('user')
+        $tickets = Ticket::with(['user', 'technician'])
             ->when(!$request->user()->isAdmin(), fn ($query) => $query->where('user_id', $request->user()->id))
             ->when($status, fn ($query) => $query->where('status', $status))
             ->latest()
@@ -51,7 +52,9 @@ class TicketController extends Controller
     {
         $this->ensureAdmin();
 
-        return view('tickets.edit', compact('ticket'));
+        $technicians = User::where('role', 'tecnico')->orderBy('name')->get();
+
+        return view('tickets.edit', compact('ticket', 'technicians'));
     }
 
     public function update(Request $request, Ticket $ticket)
@@ -66,6 +69,8 @@ class TicketController extends Controller
             'description' => 'nullable|string',
             'order_number' => 'nullable|string|max:100',
             'product_name' => 'nullable|string|max:255',
+            'comentarios_tecnico' => 'nullable|string',
+            'tecnico_id' => 'nullable|exists:users,id',
         ]);
 
         $ticket->update($data);

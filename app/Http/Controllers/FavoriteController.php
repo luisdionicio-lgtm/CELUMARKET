@@ -12,6 +12,7 @@ class FavoriteController extends Controller
         $products = $request->user()
             ->favorites()
             ->with('favoritedBy')
+            ->where('active', true)
             ->get();
 
         return view('favorites.index', compact('products'));
@@ -19,6 +20,10 @@ class FavoriteController extends Controller
 
     public function toggle(Request $request, Product $product)
     {
+        if (!$product->active) {
+            return back()->with('favorite-status', 'El producto está desactivado.');
+        }
+
         $favorites = $request->user()->favorites();
 
         if ($favorites->where('product_id', $product->id)->exists()) {

@@ -33,7 +33,14 @@ class AuthenticatedSessionController extends Controller
             return redirect()->to(route('auth.bridge', ['to' => $redirect], false));
         }
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $user = $request->user();
+        $targetRoute = match (true) {
+            $user?->isAdmin() => 'admin.dashboard',
+            $user?->isTecnico() => 'tecnico.dashboard',
+            default => 'dashboard',
+        };
+
+        return redirect()->intended(route($targetRoute, absolute: false));
     }
 
     /**

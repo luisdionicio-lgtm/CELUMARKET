@@ -13,7 +13,10 @@ use App\Http\Controllers\ComparisonController;
 use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminProductController;
+use App\Http\Controllers\AdminOrderController;
+use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\TechnicianTicketController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -53,7 +56,7 @@ Route::get('/dashboard', function () {
 // ---------------------------------------------------------------------------
 // ADMIN ROUTES (only admins)
 // ---------------------------------------------------------------------------
-Route::middleware(['auth', 'is_admin'])
+Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
@@ -72,6 +75,14 @@ Route::middleware(['auth', 'is_admin'])
         // CRUD productos
         Route::resource('products', AdminProductController::class)
             ->names('products');
+
+        Route::resource('orders', AdminOrderController::class)
+            ->only(['index', 'edit', 'update', 'destroy'])
+            ->names('orders');
+
+        Route::resource('users', AdminUserController::class)
+            ->only(['index', 'edit', 'update', 'destroy'])
+            ->names('users');
 
         Route::get('/test', function () {
             return 'Acceso permitido';
@@ -94,7 +105,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/favorites/{product}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 
     // Recursos comunes
-    Route::resource('products', ProductController::class)->middleware('is_admin');
+    Route::resource('products', ProductController::class)->middleware('role:admin');
     Route::resource('orders', OrderController::class);
     Route::resource('tickets', TicketController::class);
     Route::get('/support', [TicketController::class, 'index'])->name('support.index');
@@ -106,6 +117,23 @@ Route::middleware('auth')->group(function () {
     // Comparaciones
     Route::get('/comparaciones', [ComparisonController::class, 'index'])->name('comparisons.index');
 });
+
+// ---------------------------------------------------------------------------
+// TECHNICIAN ROUTES
+// ---------------------------------------------------------------------------
+Route::middleware(['auth', 'role:tecnico,admin'])
+    ->prefix('tecnico')
+    ->name('tecnico.')
+    ->group(function () {
+        Route::get('/dashboard', [TechnicianTicketController::class, 'index'])
+            ->name('dashboard');
+
+        Route::get('/tickets/{ticket}/edit', [TechnicianTicketController::class, 'edit'])
+            ->name('tickets.edit');
+
+        Route::put('/tickets/{ticket}', [TechnicianTicketController::class, 'update'])
+            ->name('tickets.update');
+    });
 
 
 // ---------------------------------------------------------------------------

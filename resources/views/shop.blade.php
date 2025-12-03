@@ -308,12 +308,14 @@
                             @endif
                             <div class="absolute right-4 top-4">
                                 @auth
-                                <form action="{{ route('favorites.toggle', $producto) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="text-xl {{ $isFavorite ? 'text-rose-500' : 'text-slate-400 hover:text-rose-500' }}">
-                                        <i class="{{ $isFavorite ? 'fa-solid' : 'fa-regular' }} fa-heart"></i>
-                                    </button>
-                                </form>
+                                    @if(auth()->user()->role !== 'admin')
+                                        <form action="{{ route('favorites.toggle', $producto) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="text-xl {{ $isFavorite ? 'text-rose-500' : 'text-slate-400 hover:text-rose-500' }}">
+                                                <i class="{{ $isFavorite ? 'fa-solid' : 'fa-regular' }} fa-heart"></i>
+                                            </button>
+                                        </form>
+                                    @endif
                                 @else
                                 <button type="button" class="btn-open-auth-modal text-xl text-slate-400 hover:text-rose-500">
                                     <i class="fa-regular fa-heart"></i>
@@ -350,26 +352,28 @@
                                 </span>
                             </div>
 <div class="mt-4">
-    {{-- Agregar al carrito --}}
-    <form action="{{ route('cart.add', $producto) }}" method="POST" class="flex flex-col gap-2">
-        @csrf
-        <input type="number" name="quantity" value="1" min="1" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-center focus:border-indigo-500 focus:ring-indigo-500">
-        <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1a233a] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#303a58]">
-            <i class="fa-solid fa-cart-plus"></i>
-            Agregar al carrito
-        </button>
-    </form>
+    @if(!auth()->user() || auth()->user()->role !== 'admin')
+        {{-- Agregar al carrito --}}
+        <form action="{{ route('cart.add', $producto) }}" method="POST" class="flex flex-col gap-2">
+            @csrf
+            <input type="number" name="quantity" value="1" min="1" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-center focus:border-indigo-500 focus:ring-indigo-500">
+            <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1a233a] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#303a58]">
+                <i class="fa-solid fa-cart-plus"></i>
+                Agregar al carrito
+            </button>
+        </form>
 
-    {{-- Reservar celular --}}
-    @auth
-    <form action="{{ route('reservations.store', $producto->id) }}" method="POST" class="mt-2">
-        @csrf
-        <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700">
-            <i class="fa-solid fa-bookmark"></i>
-            Reservar celular
-        </button>
-    </form>
-    @endauth
+        {{-- Reservar celular --}}
+        @auth
+        <form action="{{ route('reservations.store', $producto->id) }}" method="POST" class="mt-2">
+            @csrf
+            <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700">
+                <i class="fa-solid fa-bookmark"></i>
+                Reservar celular
+            </button>
+        </form>
+        @endauth
+    @endif
 </div>
 </div> {{-- cierre del flex-1 --}}
 </article>

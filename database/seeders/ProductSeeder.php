@@ -373,6 +373,7 @@ Product::create([
                 'nombre' => $product->name,
                 'precio' => $product->price,
                 'stock' => $product->in_stock ? 25 : 0,
+                'active' => true,
             ]);
         });
     }

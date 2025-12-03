@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Reservation;
+use App\Models\Product;
 
 class ReservationController extends Controller
 {
@@ -25,9 +26,11 @@ class ReservationController extends Controller
      */
     public function store($productId)
     {
+        $product = Product::where('id', $productId)->where('active', true)->firstOrFail();
+
         Reservation::create([
             'user_id'    => auth()->id(),
-            'product_id' => $productId,
+            'product_id' => $product->id,
             'status'     => 'pendiente'
         ]);
 

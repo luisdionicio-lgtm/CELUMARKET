@@ -30,6 +30,7 @@
                     <th class="px-4 py-3">Precio</th>
                     <th class="px-4 py-3">Stock</th>
                     <th class="px-4 py-3">Destacado</th>
+                    <th class="px-4 py-3">Estado</th>
                     <th class="px-4 py-3 text-right">Acciones</th>
                 </tr>
             </thead>
@@ -50,39 +51,48 @@
                                 <span class="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">No</span>
                             @endif
                         </td>
+                        <td class="px-4 py-3">
+                            <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold {{ $product->active ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600' }}">
+                                {{ $product->active ? 'Activo' : 'Inactivo' }}
+                            </span>
+                        </td>
                         <td class="px-4 py-3 text-right">
-                            <div class="inline-flex gap-2 text-sm font-semibold">
-                                {{-- Botón Editar --}}
+                            <div class="inline-flex flex-wrap gap-2 text-sm font-semibold justify-end">
                                 <a href="{{ route('products.edit', $product) }}" class="text-indigo-600 hover:underline">Editar</a>
 
-                                {{-- Botón Eliminar --}}
-                                <form action="{{ route('products.destroy', $product) }}" method="POST" onsubmit="return confirm('¿Eliminar este producto?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-rose-600 hover:underline">Eliminar</button>
-                                </form>
+                                @if($product->active)
+                                    <form action="{{ route('products.destroy', $product) }}" method="POST" onsubmit="return confirm('¿Desactivar este producto?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-rose-600 hover:underline">Desactivar</button>
+                                    </form>
+                                @else
+                                    <span class="text-xs text-slate-400">Desactivado</span>
+                                @endif
 
-                                {{-- Botón Agregar al carrito --}}
-                                <form action="{{ route('cart.add', $product->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
-                                        Agregar al carrito
-                                    </button>
-                                </form>
+                                @if($product->active)
+                                    @if(!auth()->user() || auth()->user()->role !== 'admin')
+                                        <form action="{{ route('cart.add', $product->id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
+                                                Agregar al carrito
+                                            </button>
+                                        </form>
 
-                                {{-- Botón Reservar celular --}}
-                                <form action="{{ route('reservations.store', $product->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
-                                        Reservar celular
-                                    </button>
-                                </form>
+                                        <form action="{{ route('reservations.store', $product->id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+                                                Reservar celular
+                                            </button>
+                                        </form>
+                                    @endif
+                                @endif
                             </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-4 py-8 text-center text-slate-500">Aún no registras productos.</td>
+                        <td colspan="6" class="px-4 py-8 text-center text-slate-500">Aún no registras productos.</td>
                     </tr>
                 @endforelse
             </tbody>

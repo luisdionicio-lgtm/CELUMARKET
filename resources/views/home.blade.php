@@ -248,12 +248,14 @@
                         @endif
                         <div class="absolute right-4 top-4">
                             @auth
-                                <form action="{{ route('favorites.toggle', $producto) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="text-xl {{ $isFavorite ? 'text-rose-500' : 'text-slate-400 hover:text-rose-500' }}">
-                                        <i class="{{ $isFavorite ? 'fa-solid' : 'fa-regular' }} fa-heart"></i>
-                                    </button>
-                                </form>
+                                @if(auth()->user()->role !== 'admin')
+                                    <form action="{{ route('favorites.toggle', $producto) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="text-xl {{ $isFavorite ? 'text-rose-500' : 'text-slate-400 hover:text-rose-500' }}">
+                                            <i class="{{ $isFavorite ? 'fa-solid' : 'fa-regular' }} fa-heart"></i>
+                                        </button>
+                                    </form>
+                                @endif
                             @else
                                 <button type="button" class="btn-open-auth-modal text-xl text-slate-400 hover:text-rose-500">
                                     <i class="fa-regular fa-heart"></i>
@@ -278,13 +280,15 @@
                             @endif
                         </ul>
                         <p class="mt-4 text-2xl font-bold text-[#1a233a]">S/ {{ number_format($precio, 2) }}</p>
-                        <form action="{{ route('cart.add', $producto) }}" method="POST" class="mt-4">
-                            @csrf
-                            <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#1a233a] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#303a58]">
-                                <i class="fa-solid fa-cart-plus"></i>
-                                Agregar al carrito
-                            </button>
-                        </form>
+                        @if(!auth()->user() || auth()->user()->role !== 'admin')
+                            <form action="{{ route('cart.add', $producto) }}" method="POST" class="mt-4">
+                                @csrf
+                                <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#1a233a] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#303a58]">
+                                    <i class="fa-solid fa-cart-plus"></i>
+                                    Agregar al carrito
+                                </button>
+                            </form>
+                        @endif
                     </div>
                 </article>
             @endforeach

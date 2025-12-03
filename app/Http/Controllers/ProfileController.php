@@ -14,14 +14,14 @@ class ProfileController extends Controller
     /**
      * Mostrar el formulario de perfil del usuario autenticado.
      */
-    public function edit(Request $request): View
+    public function edit(Request $request)
     {
-        // Verifica que el usuario esté autenticado antes de mostrar el formulario
         $user = $request->user();
 
         if (!$user) {
             abort(403, 'No autorizado');
         }
+
         return view('profile.edit', [
             'user' => $user,
         ]);
@@ -37,10 +37,8 @@ class ProfileController extends Controller
         if (!$user) {
             abort(403, 'No autorizado');
         }
-        // Rellena los campos validados en el modelo User
         $user->fill($request->validated());
 
-        // Si el correo fue modificado, se invalida la verificación
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
         }

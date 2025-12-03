@@ -5,7 +5,7 @@
     <h2 class="text-2xl font-bold text-slate-900 mb-6">Panel de Administración</h2>
 
     <!-- Métricas -->
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-10">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-10">
         <div class="rounded-xl bg-white p-4 shadow-sm border border-slate-200">
             <p class="text-sm text-slate-500">Total Productos</p>
             <h3 class="text-2xl font-bold text-[#1a233a]">{{ $totalProductos }}</h3>
@@ -25,6 +25,10 @@
         <div class="rounded-xl bg-white p-4 shadow-sm border border-slate-200">
             <p class="text-sm text-slate-500">Ingresos Totales</p>
             <h3 class="text-2xl font-bold text-[#1a233a]">S/ {{ number_format($ingresosTotales, 2) }}</h3>
+        </div>
+        <div class="rounded-xl bg-white p-4 shadow-sm border border-slate-200">
+            <p class="text-sm text-slate-500">Productos inactivos</p>
+            <h3 class="text-2xl font-bold text-[#1a233a]">{{ $productosInactivos }}</h3>
         </div>
     </div>
 
@@ -53,6 +57,7 @@
                     <th class="px-4 py-3">Stock</th>
                     <th class="px-4 py-3">Rating</th>
                     <th class="px-4 py-3">Destacado</th>
+                    <th class="px-4 py-3">Estado</th>
                     <th class="px-4 py-3">Acciones</th>
                 </tr>
             </thead>
@@ -72,15 +77,34 @@
                     <td class="px-4 py-3">{{ $producto->brand }}</td>
                     <td class="px-4 py-3">S/ {{ number_format($producto->price, 2) }}</td>
                     <td class="px-4 py-3">{{ $producto->stock ? 'En Stock' : 'Sin Stock' }}</td>
-                    <td class="px-4 py-3">⭐ {{ number_format($producto->rating, 1) }}</td>
+                    <td class="px-4 py-3">★ {{ number_format($producto->rating, 1) }}</td>
                     <td class="px-4 py-3">{{ $producto->featured ? 'Sí' : 'No' }}</td>
+                    <td class="px-4 py-3">
+                        <span class="rounded-full px-3 py-1 text-xs font-semibold {{ $producto->active ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600' }}">
+                            {{ $producto->active ? 'Activo' : 'Inactivo' }}
+                        </span>
+                    </td>
                     <td class="px-4 py-3 flex gap-2">
                         <a href="{{ route('admin.products.edit', $producto) }}" class="text-blue-600 hover:underline"><i class="fa-solid fa-pen-to-square"></i></a>
-                        <form action="{{ route('admin.products.destroy', $producto) }}" method="POST" onsubmit="return confirm('¿Eliminar este producto?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-600 hover:underline"><i class="fa-solid fa-trash"></i></button>
-                        </form>
+                        @if($producto->active)
+                            <form action="{{ route('admin.products.destroy', $producto) }}" method="POST" onsubmit="return confirm('¿Desactivar este producto?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-600 hover:underline"><i class="fa-solid fa-power-off"></i></button>
+                            </form>
+                        @else
+                            <form action="{{ route('admin.products.update', $producto) }}" method="POST" onsubmit="return confirm('¿Activar este producto?')">
+                                @csrf
+                                @method('PUT')
+                                <input type="hidden" name="active" value="1">
+                                <input type="hidden" name="name" value="{{ $producto->name }}">
+                                <input type="hidden" name="brand" value="{{ $producto->brand }}">
+                                <input type="hidden" name="price" value="{{ $producto->price }}">
+                                <input type="hidden" name="stock" value="{{ $producto->stock }}">
+                                <input type="hidden" name="rating" value="{{ $producto->rating }}">
+                                <button type="submit" class="text-emerald-600 hover:underline"><i class="fa-solid fa-rotate-left"></i></button>
+                            </form>
+                        @endif
                     </td>
                 </tr>
                 @endforeach

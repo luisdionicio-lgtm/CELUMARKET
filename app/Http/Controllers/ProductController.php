@@ -9,7 +9,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::latest()->get();
+        $products = Product::orderByDesc('id')->get();
 
         return view('products.index', compact('products'));
     }
@@ -52,9 +52,12 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        $product->delete();
+        $product->update([
+            'active' => false,
+            'in_stock' => false,
+        ]);
 
-        return back()->with('success', 'Producto eliminado.');
+        return back()->with('success', 'Producto desactivado.');
     }
 
     private function mapProductPayload(array $data, ?Product $product = null): array
@@ -77,6 +80,7 @@ class ProductController extends Controller
             'battery' => $product->battery ?? 'N/D',
             'in_stock' => $data['stock'] > 0,
             'featured' => $product->featured ?? false,
+            'active' => $product->active ?? true,
         ];
     }
 }

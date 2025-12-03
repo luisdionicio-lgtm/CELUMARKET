@@ -9,8 +9,7 @@ class AdminProductController extends Controller
 {
     public function index()
     {
-        $productos = Product::latest()->get();
-        return view('admin.dashboard', compact('productos'));
+        return redirect()->route('admin.dashboard');
     }
 
     public function create()
@@ -28,6 +27,7 @@ class AdminProductController extends Controller
             'rating'   => 'nullable|numeric|min:0|max:5',
             'featured' => 'nullable|boolean',
             'image'    => 'nullable|image|max:2048',
+            'active'   => 'nullable|boolean',
         ]);
 
         if ($request->hasFile('image')) {
@@ -35,6 +35,8 @@ class AdminProductController extends Controller
         }
 
         $validated['featured'] = $request->has('featured');
+        $validated['active'] = $request->boolean('active', true);
+        $validated['in_stock'] = $validated['stock'] > 0;
 
         Product::create($validated);
 
@@ -56,13 +58,16 @@ class AdminProductController extends Controller
             'rating'   => 'nullable|numeric|min:0|max:5',
             'featured' => 'nullable|boolean',
             'image'    => 'nullable|image|max:2048',
+            'active'   => 'nullable|boolean',
         ]);
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('products', 'public');
+            $validated['image_url'] = $request->file('image')->store('products', 'public');
         }
 
         $validated['featured'] = $request->has('featured');
+        $validated['active'] = $request->boolean('active', $product->active);
+        $validated['in_stock'] = $validated['stock'] > 0;
 
         $product->update($validated);
 
@@ -71,7 +76,15 @@ class AdminProductController extends Controller
 
     public function destroy(Product $product)
     {
-        $product->delete();
-        return redirect()->route('admin.dashboard')->with('success', 'Producto eliminado correctamente.');
+        if (!$product->active) {
+            return redirect()->route('admin.dashboard')->with('success', 'El producto ya estaba desactivado.');
+        }
+
+        $product->update([
+            'active' => false,
+            'in_stock' => false,
+        ]);
+
+        return redirect()->route('admin.dashboard')->with('success', 'Producto desactivado correctamente.');
     }
 }

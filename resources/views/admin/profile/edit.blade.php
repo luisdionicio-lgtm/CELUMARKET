@@ -5,8 +5,8 @@
     
     {{-- Botón volver --}}
     <a href="{{ route('admin.dashboard') }}"
-        class="inline-flex items-center mb-8 px-4 py-2 rounded-xl bg-slate-800 text-white text-sm font-semibold hover:bg-slate-700 transition">
-            <i class="fa-solid fa-arrow-left mr-2"></i> Volver al Panel
+        class="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-xl border border-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-50 transition">
+            <i class="fa-solid fa-arrow-left"></i> Volver al Panel
     </a>
 
     <h2 class="text-2xl font-bold text-slate-900 mb-6">Información del perfil</h2>

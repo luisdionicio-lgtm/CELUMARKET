@@ -45,17 +45,40 @@
                         </x-nav-link>
                     @endauth
 
-                    {{-- Perfil / Admin --}}
+                    {{-- Perfil / Admin / Técnico --}}
                     @auth
-                        @if(auth()->check() && auth()->user()->isAdmin())
-                            <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
-                                <i class="fa-solid fa-user-shield mr-2"></i> Panel administrador
+                        @if(auth()->user()->role === 'admin')
+                            <div class="relative group">
+                                <button class="inline-flex h-full items-center gap-2 text-gray-300 hover:text-primary font-semibold">
+                                    <i class="fa-solid fa-user-shield"></i>
+                                    Panel administrador
+                                    <i class="fa-solid fa-chevron-down text-xs"></i>
+                                </button>
+
+                                <div class="absolute left-0 z-20 hidden w-48 rounded-lg border border-slate-200 bg-white py-2 shadow-lg group-hover:block">
+                                    <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                        Mi perfil
+                                    </a>
+                                    <a href="{{ route('admin.products.index') }}" class="block px-4 py-2 text-sm hover:bg-gray-100">
+                                        Gestionar productos
+                                    </a>
+                                    <a href="{{ route('admin.orders.index') }}" class="block px-4 py-2 text-sm hover:bg-gray-100">
+                                        Gestionar pedidos
+                                    </a>
+                                    <a href="{{ route('admin.users.index') }}" class="block px-4 py-2 text-sm hover:bg-gray-100">
+                                        Gestionar usuarios
+                                    </a>
+                                </div>
+                            </div>
+                        @elseif(auth()->user()->isTecnico())
+                            <x-nav-link :href="route('tecnico.dashboard')" :active="request()->routeIs('tecnico.*')">
+                                <i class="fa-solid fa-screwdriver-wrench mr-2"></i> Panel técnico
+                            </x-nav-link>
+                        @else
+                            <x-nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.*')">
+                                <i class="fa-solid fa-id-card mr-2"></i> Mi perfil
                             </x-nav-link>
                         @endif
-
-                        <x-nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.*')">
-                            <i class="fa-solid fa-id-card mr-2"></i> Mi perfil
-                        </x-nav-link>
                     @endauth
                 </div>
             </div>
@@ -112,13 +135,20 @@
 
             {{-- Perfil en versión móvil --}}
             @auth
-                @if(auth()->user()->isAdmin())
-                    <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
-                        Panel administrador
-                    </x-responsive-nav-link>
-                @endif
-                <x-responsive-nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.*')">
-                    Perfil
+                @php
+                    $profileRoute = auth()->user()->isAdmin()
+                        ? route('admin.dashboard')
+                        : (auth()->user()->isTecnico() ? route('tecnico.dashboard') : route('profile.edit'));
+                    $profileActive = auth()->user()->isAdmin()
+                        ? request()->routeIs('admin.*')
+                        : (auth()->user()->isTecnico() ? request()->routeIs('tecnico.*') : request()->routeIs('profile.*'));
+                    $profileLabel = auth()->user()->isAdmin()
+                        ? 'Panel administrador'
+                        : (auth()->user()->isTecnico() ? 'Panel técnico' : 'Perfil');
+                @endphp
+
+                <x-responsive-nav-link :href="$profileRoute" :active="$profileActive">
+                    {{ $profileLabel }}
                 </x-responsive-nav-link>
             @endauth
         </div>

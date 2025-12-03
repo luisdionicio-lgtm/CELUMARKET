@@ -34,6 +34,10 @@ class CartController extends Controller
     {
         $quantity = $request->quantity();
 
+        if (!$product->active) {
+            return back()->with('status', 'Producto no disponible.');
+        }
+
         if (!$product->in_stock) {
             return back()->with('status', 'Producto sin stock.');
         }
@@ -56,6 +60,14 @@ class CartController extends Controller
 
         if ($user) {
             $this->cartService->mergeSessionToUser($user);
+        }
+
+        if (!$product->active) {
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Producto desactivado.'], 400);
+            }
+
+            return back()->with('status', 'Producto desactivado.');
         }
 
         $this->cartService->updateQuantity($product, $quantity, $user);
@@ -90,6 +102,10 @@ class CartController extends Controller
             return redirect()->route('login');
         }
 
+        if (!$product->active) {
+            return back()->with('status', 'Producto no disponible para reserva.');
+        }
+
         Reservation::create([
             'user_id' => auth()->id(),
             'product_id' => $product->id,
@@ -103,6 +119,10 @@ class CartController extends Controller
     {
         if (!auth()->check()) {
             return redirect()->route('login');
+        }
+
+        if (!$product->active) {
+            return back()->with('status', 'Producto desactivado.');
         }
 
         $recommended = $product->marca === 'Samsung' || $product->ram >= 6;

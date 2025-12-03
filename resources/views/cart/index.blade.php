@@ -59,17 +59,19 @@
                                 <button type="submit" class="text-rose-600 hover:underline">Eliminar</button>
                             </form>
 
-                            {{-- Reservar producto desde carrito --}}
-                            <form action="{{ route('cart.reserve', $line->product) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="text-amber-600 hover:underline">Reservar producto</button>
-                            </form>
+                            @if(!auth()->user() || auth()->user()->role !== 'admin')
+                                {{-- Reservar producto desde carrito --}}
+                                <form action="{{ route('cart.reserve', $line->product) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="text-amber-600 hover:underline">Reservar producto</button>
+                                </form>
 
-                            {{-- Comparar producto --}}
-                            <form action="{{ route('cart.compare', $line->product) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="text-indigo-600 hover:underline">Comparar producto</button>
-                            </form>
+                                {{-- Comparar producto --}}
+                                <form action="{{ route('cart.compare', $line->product) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="text-indigo-600 hover:underline">Comparar producto</button>
+                                </form>
+                            @endif
                         </div>
                     </div>
                 </article>

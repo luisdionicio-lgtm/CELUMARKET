@@ -50,7 +50,7 @@ class CartService
             return Cart::with('product')
                 ->where('user_id', $user->id)
                 ->get()
-                ->filter(fn (Cart $cart) => $cart->product)
+                ->filter(fn (Cart $cart) => $cart->product && $cart->product->active)
                 ->map(fn (Cart $cart) => $this->formatLine($cart->product, $cart->quantity));
         }
 
@@ -60,7 +60,10 @@ class CartService
             return collect();
         }
 
-        $products = Product::whereIn('id', array_keys($sessionCart))->get()->keyBy('id');
+        $products = Product::where('active', true)
+            ->whereIn('id', array_keys($sessionCart))
+            ->get()
+            ->keyBy('id');
 
         return collect($sessionCart)->map(function ($quantity, $productId) use ($products) {
             if (!$products->has($productId)) {

@@ -27,8 +27,16 @@
             @endguest
 
             @auth
-            <a href="{{ route('profile.edit') }}" class="hover:text-primary">
-                Mi Perfil
+            @php
+                $profileRoute = auth()->user()->isAdmin()
+                    ? route('admin.dashboard')
+                    : (auth()->user()->isTecnico() ? route('tecnico.dashboard') : route('profile.edit'));
+                $profileLabel = auth()->user()->isAdmin()
+                    ? 'Panel administrador'
+                    : (auth()->user()->isTecnico() ? 'Panel técnico' : 'Mi Perfil');
+            @endphp
+            <a href="{{ $profileRoute }}" class="hover:text-primary">
+                {{ $profileLabel }}
             </a>
             @endauth
         </div>

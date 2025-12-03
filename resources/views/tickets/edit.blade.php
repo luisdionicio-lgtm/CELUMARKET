@@ -98,10 +98,34 @@
                 @enderror
             </div>
 
+            <div class="grid gap-4 md:grid-cols-2">
+                <div>
+                    <label class="text-sm font-semibold text-slate-700">Asignar técnico</label>
+                    <select name="tecnico_id" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-slate-100 disabled:text-slate-500" @disabled($readOnly)>
+                        <option value="">Sin asignar</option>
+                        @foreach($technicians as $technician)
+                            <option value="{{ $technician->id }}" @selected(old('tecnico_id', $ticket->tecnico_id) == $technician->id)>
+                                {{ $technician->name }} ({{ $technician->email }})
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('tecnico_id')
+                        <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label class="text-sm font-semibold text-slate-700">Notas técnicas</label>
+                    <textarea name="comentarios_tecnico" rows="3" class="mt-1 w-full rounded-2xl border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-slate-100 disabled:text-slate-500" @disabled($readOnly)>{{ old('comentarios_tecnico', $ticket->comentarios_tecnico) }}</textarea>
+                    @error('comentarios_tecnico')
+                        <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
             <div class="flex justify-end gap-3">
-                <a href="{{ route('tickets.index') }}" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50">Cerrar</a>
+                <a href="{{ route('tickets.index') }}" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100">Cerrar</a>
                 @if(!$readOnly)
-                    <button type="submit" class="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-secondary">
+                    <button type="submit" class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800">
                         Guardar cambios
                     </button>
                 @endif

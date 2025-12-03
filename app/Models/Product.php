@@ -9,24 +9,30 @@ class Product extends Model
 {
     use HasFactory;
 
-protected $fillable = [
-    'name',
-    'brand',
-    'description',
-    'price',
-    'stock',
-    'image_url',
-    'rating',
-    'storage',
-    'ram',
-    'processor',
-    'camera',
-    'screen',
-    'battery',
-    'in_stock',
-    'featured',
-];
+    protected $fillable = [
+        'name',
+        'brand',
+        'description',
+        'price',
+        'stock',
+        'image_url',
+        'rating',
+        'storage',
+        'ram',
+        'processor',
+        'camera',
+        'screen',
+        'battery',
+        'in_stock',
+        'featured',
+        'active',
+    ];
 
+    protected $casts = [
+        'in_stock' => 'boolean',
+        'featured' => 'boolean',
+        'active' => 'boolean',
+    ];
 
     public function getImageSrcAttribute()
     {

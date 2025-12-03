@@ -25,7 +25,9 @@
 @section('content')
 @php
     $user = auth()->user();
-    $roleLabel = $user->isAdmin() ? 'Administrador' : 'Usuario';
+    $roleLabel = $user->isAdmin()
+        ? 'Administrador'
+        : ($user->isTecnico() ? 'Técnico' : 'Usuario');
 @endphp
 
 <div class="mx-auto max-w-6xl space-y-8" x-data="{ tab: 'tickets' }">
@@ -93,31 +95,6 @@
         </div>
     </section>
 
-    @if(auth()->user()?->is_admin)
-        <section class="grid gap-4 md:grid-cols-2">
-            <a href="{{ route('orders.index') }}" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-md transition hover:-translate-y-0.5 hover:shadow-lg">
-                <div class="flex items-center gap-3">
-                    <span class="rounded-2xl bg-indigo-100 p-3 text-indigo-600"><i class="fa-solid fa-box"></i></span>
-                    <div>
-                        <p class="text-sm uppercase tracking-[0.35em] text-slate-500">Admin</p>
-                        <h3 class="text-lg font-semibold text-primary">Gestionar pedidos</h3>
-                        <p class="text-sm text-slate-500">Acceso directo al panel de pedidos.</p>
-                    </div>
-                </div>
-            </a>
-            <a href="{{ route('products.index') }}" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-md transition hover:-translate-y-0.5 hover:shadow-lg">
-                <div class="flex items-center gap-3">
-                    <span class="rounded-2xl bg-emerald-100 p-3 text-emerald-600"><i class="fa-solid fa-mobile-screen-button"></i></span>
-                    <div>
-                        <p class="text-sm uppercase tracking-[0.35em] text-slate-500">Admin</p>
-                        <h3 class="text-lg font-semibold text-primary">Gestionar productos</h3>
-                        <p class="text-sm text-slate-500">Actualiza inventario y precios.</p>
-                    </div>
-                </div>
-            </a>
-        </section>
-    @endif
-
     @if(session('success'))
         <div id="ticket-flash" class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 shadow-sm transition-opacity duration-500">
             {{ session('success') }}
@@ -134,15 +111,15 @@
 
     <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-md">
         <div class="flex flex-wrap gap-3 border-b border-slate-200 pb-4 text-sm font-semibold">
-            <button type="button" @click="tab = 'tickets'" :class="tab === 'tickets' ? 'bg-primary text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="rounded-full px-4 py-2 transition">Mis Tickets</button>
-            <button type="button" @click="tab = 'faq'" :class="tab === 'faq' ? 'bg-primary text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="rounded-full px-4 py-2 transition">Preguntas Frecuentes</button>
+            <button type="button" @click="tab = 'tickets'" :class="tab === 'tickets' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="rounded-full px-4 py-2 transition">Mis Tickets</button>
+            <button type="button" @click="tab = 'faq'" :class="tab === 'faq' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="rounded-full px-4 py-2 transition">Preguntas Frecuentes</button>
         </div>
 
         <div x-show="tab === 'tickets'" class="mt-6 space-y-4" x-transition>
             <div class="flex flex-wrap gap-3 text-sm font-semibold">
-                <a href="{{ route('tickets.index') }}" class="rounded-full px-4 py-2 {{ request('status') ? 'text-slate-500 bg-slate-100 hover:bg-slate-200' : 'bg-primary text-white' }}">Todos</a>
+                <a href="{{ route('tickets.index') }}" class="rounded-full px-4 py-2 {{ request('status') ? 'text-slate-500 bg-slate-100 hover:bg-slate-200' : 'bg-slate-900 text-white' }}">Todos</a>
                 @foreach ($statuses as $value => $label)
-                    <a href="{{ route('tickets.index', ['status' => $value]) }}" class="rounded-full px-4 py-2 {{ request('status') === $value ? 'bg-primary text-white' : 'text-slate-500 bg-slate-100 hover:bg-slate-200' }}">
+                    <a href="{{ route('tickets.index', ['status' => $value]) }}" class="rounded-full px-4 py-2 {{ request('status') === $value ? 'bg-slate-900 text-white' : 'text-slate-500 bg-slate-100 hover:bg-slate-200' }}">
                         {{ $label }}
                     </a>
                 @endforeach
@@ -170,11 +147,20 @@
                                     </div>
                                     <h3 class="mt-3 text-lg font-semibold text-secondary">{{ $ticket->subject }}</h3>
                                     <p class="mt-1 text-sm text-slate-500 line-clamp-2">{{ $ticket->description ?? 'Sin descripción' }}</p>
+                                    @if($ticket->comentarios_tecnico)
+                                        <div class="mt-3 rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-700">
+                                            <p class="font-semibold text-slate-900 mb-1">Notas técnicas</p>
+                                            <p class="leading-relaxed">{{ $ticket->comentarios_tecnico }}</p>
+                                        </div>
+                                    @endif
                                     <div class="mt-3 flex flex-wrap gap-4 text-xs text-slate-400">
                                         <span>Creado: {{ $ticket->created_at->format('d/m/Y H:i') }}</span>
                                         <span>Actualizado: {{ $ticket->updated_at->format('d/m/Y H:i') }}</span>
                                         @if($ticket->product_name)
                                             <span>Producto: {{ $ticket->product_name }}</span>
+                                        @endif
+                                        @if($ticket->technician)
+                                            <span>Técnico: {{ $ticket->technician->name }}</span>
                                         @endif
                                     </div>
                                 </div>

@@ -11,8 +11,9 @@ class AdminDashboardController extends Controller
 {
     public function index()
     {
-        $totalProductos = Product::count();
-        $productosEnStock = Product::where('stock', '>', 0)->count();
+        $totalProductos = Product::where('active', true)->count();
+        $productosEnStock = Product::where('active', true)->where('stock', '>', 0)->count();
+        $productosInactivos = Product::where('active', false)->count();
         $pedidosTotales = Order::count();
         $usuariosRegistrados = User::count();
         $ingresosTotales = Order::sum('total'); // Asegúrate de tener un campo 'total' en tu modelo Order
@@ -22,6 +23,7 @@ class AdminDashboardController extends Controller
         return view('admin.dashboard', compact(
             'totalProductos',
             'productosEnStock',
+            'productosInactivos',
             'pedidosTotales',
             'usuariosRegistrados',
             'ingresosTotales',

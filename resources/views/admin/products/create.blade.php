@@ -41,6 +41,13 @@
         </div>
 
         <div>
+            <label class="inline-flex items-center">
+                <input type="checkbox" name="active" class="form-checkbox" checked>
+                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Producto activo</span>
+            </label>
+        </div>
+
+        <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Imagen</label>
             <input type="file" name="image" accept="image/*" class="w-full border rounded px-3 py-2">
         </div>
