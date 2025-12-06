@@ -10,9 +10,8 @@ use Illuminate\Support\Facades\Session;
 
 class CartService
 {
-    /**
-     * Merge the session cart into the authenticated user's cart.
-     */
+    
+    /** Fusionar el carrito de la sesión con el carrito del usuario autenticado. **/
     public function mergeSessionToUser(User $user): void
     {
         $sessionCart = Session::get('cart', []);
@@ -41,9 +40,10 @@ class CartService
         Session::forget(['cart', 'cart_ready']);
     }
 
+
     /**
-     * Retrieve cart items for either session or authenticated user.
-     */
+    * Recuperar artículos del carrito para la sesión o el usuario autenticado.
+    */
     public function getItems(?User $user): Collection
     {
         if ($user) {
@@ -165,8 +165,8 @@ class CartService
     }
 
     /**
-     * Clean session flags when cart becomes empty.
-     */
+    * Limpiar las banderas de sesión cuando el carrito esté vacío.
+    */
     protected function cleanupSessionFlags(?User $user = null): void
     {
         if ($user) {

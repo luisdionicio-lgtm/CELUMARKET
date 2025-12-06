@@ -56,16 +56,17 @@ class User extends Authenticatable
         return $this->role === 'admin';
     }
 
+
     /**
-     * Check if the user has the technician role.
-     */
+    * Verificar si el usuario tiene el rol de técnico.
+    */
     public function isTecnico(): bool
     {
         return ($this->role ?? 'user') === 'tecnico';
     }
 
     /**
-     * Generic helper to match against one or many roles.
+     * Ayudante genérico para comparar con uno o muchos roles.
      *
      * @param  string|array<int, string>  $roles
      */

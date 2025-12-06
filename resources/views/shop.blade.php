@@ -290,16 +290,21 @@
                     <p class="mx-auto mt-4 max-w-2xl text-base text-slate-600">
                         Seleccionamos los equipos mejor valorados para que encuentres el celular ideal.
                     </p>
-                </div>
+            </div>
 
-                <div id="shopProductList" class="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                    @foreach ($productos as $producto)
-                    @php
+            <div id="shopProductList" class="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                @foreach ($productos as $producto)
+                @php
                     $isFavorite = in_array($producto->id, $favoriteProductIds ?? [], true);
                     $precio = $producto->precio ?? $producto->price;
                     @endphp
 
-                    <article class="flex flex-col rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+                    <article
+                        class="flex flex-col rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+                        data-product-card
+                        data-name="{{ Str::lower($producto->name) }}"
+                        data-brand="{{ Str::lower($producto->brand) }}"
+                    >
                         <div class="relative flex items-center justify-center bg-slate-50 p-6">
                             @if ($producto->featured)
                             <span class="absolute left-4 top-4 rounded-full bg-amber-500 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
@@ -379,6 +384,42 @@
 </article>
 @endforeach
 </div> {{-- cierre del grid --}}
+                @if($productos instanceof \Illuminate\Pagination\LengthAwarePaginator && $productos->lastPage() > 1)
+                <div class="mt-10 flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-2">
+                        <a
+                            href="{{ $productos->previousPageUrl() ?: '#' }}"
+                            class="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 {{ $productos->onFirstPage() ? 'pointer-events-none opacity-40' : '' }}"
+                            aria-label="Página anterior"
+                        >
+                            <i class="fa-solid fa-chevron-left"></i>
+                            Anterior
+                        </a>
+                        <a
+                            href="{{ $productos->nextPageUrl() ?: '#' }}"
+                            class="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 {{ !$productos->hasMorePages() ? 'pointer-events-none opacity-40' : '' }}"
+                            aria-label="Página siguiente"
+                        >
+                            Siguiente
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2">
+                        @foreach (range(1, $productos->lastPage()) as $page)
+                            <a
+                                href="{{ $page === $productos->currentPage() ? '#' : $productos->url($page) }}"
+                                class="min-w-[2.5rem] rounded-lg border px-3 py-2 text-sm font-semibold transition {{ $page === $productos->currentPage() ? 'border-[#1a233a] bg-[#1a233a] text-white' : 'border-slate-200 text-slate-600 hover:border-slate-300' }}"
+                                aria-label="Ir a la página {{ $page }}"
+                                aria-current="{{ $page === $productos->currentPage() ? 'page' : 'false' }}"
+                            >
+                                {{ $page }}
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
 </div> {{-- cierre del contenedor --}}
 </section>
 </main>
@@ -387,6 +428,24 @@
 
 <script>
     window.__cartItems = @json($cartItems);
+
+    // Búsqueda en vivo por nombre o marca
+    (function () {
+        const input = document.getElementById('shopSearchInput');
+        if (!input) return;
+
+        const cards = Array.from(document.querySelectorAll('[data-product-card]'));
+
+        input.addEventListener('input', (e) => {
+            const term = (e.target.value || '').toLowerCase().trim();
+            cards.forEach(card => {
+                const name = card.dataset.name || '';
+                const brand = card.dataset.brand || '';
+                const matches = term === '' || name.includes(term) || brand.includes(term);
+                card.style.display = matches ? '' : 'none';
+            });
+        });
+    })();
 </script>
 
 @include('components.footer')

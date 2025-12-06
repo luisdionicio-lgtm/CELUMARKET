@@ -21,6 +21,7 @@
     .demo-icon { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 8px; background: #f3f4f6; color: #334155; }
     .badge { font-size: .7rem; color: #fff; background: #ef4444; padding: .15rem .45rem; border-radius: 999px; margin-left: .5rem; }
     .auth-close { position: absolute; right: .75rem; top: .75rem; background: transparent; border: none; font-size: 1.1rem; cursor: pointer; color: #6b7280; }
+    .auth-toggle { position: absolute; right: .6rem; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: #64748b; font-weight: 600; cursor: pointer; padding: 0 .35rem; }
 </style>
 
 <!-- Componente de modal de autenticación -->
@@ -37,6 +38,16 @@
         </div>
 
         <div class="auth-content">
+            @if ($errors->any())
+                <div class="mb-4 rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                    <strong class="block mb-1">Por favor revisa los datos:</strong>
+                    <ul class="list-disc space-y-1 pl-4">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <!-- INICIO DE SESIÓN -->
             <div id="panel-login" class="auth-panel" role="tabpanel" aria-labelledby="tab-login">
                 <div class="auth-card auth-form">
@@ -45,10 +56,15 @@
                     <form method="POST" action="{{ route('login') }}" class="space-y-3">
                         @csrf
                         <label for="login_email">Correo electrónico</label>
-                        <input id="login_email" class="auth-input" type="email" name="email" placeholder="tu@email.com" required autocomplete="username">
+                        <input id="login_email" class="auth-input" type="email" name="email" placeholder="tu@email.com" required autocomplete="username" value="{{ old('email') }}">
                         <div style="height:.65rem"></div>
                         <label for="login_password">Contraseña</label>
-                        <input id="login_password" class="auth-input" type="password" name="password" placeholder="••••••••" required autocomplete="current-password">
+                        <div style="position:relative;">
+                            <input id="login_password" class="auth-input" type="password" name="password" placeholder="********" required autocomplete="current-password">
+                            <button type="button" class="auth-toggle" aria-label="Mostrar u ocultar contraseña" data-toggle-password="login_password">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
                         <div style="height:1rem"></div>
                         <button type="submit" class="btn-auth-primary">Iniciar sesión</button>
                     </form>
@@ -89,16 +105,26 @@
                     <form method="POST" action="{{ route('register') }}" class="space-y-3">
                         @csrf
                         <label for="reg_name">Nombre</label>
-                        <input id="reg_name" class="auth-input" type="text" name="name" placeholder="Tu nombre" required autocomplete="name">
+                        <input id="reg_name" class="auth-input" type="text" name="name" placeholder="Tu nombre" required autocomplete="name" value="{{ old('name') }}">
                         <div style="height:.65rem"></div>
                         <label for="reg_email">Correo electrónico</label>
-                        <input id="reg_email" class="auth-input" type="email" name="email" placeholder="tu@email.com" required autocomplete="email">
+                        <input id="reg_email" class="auth-input" type="email" name="email" placeholder="tu@email.com" required autocomplete="email" value="{{ old('email') }}">
                         <div style="height:.65rem"></div>
                         <label for="reg_password">Contraseña</label>
-                        <input id="reg_password" class="auth-input" type="password" name="password" placeholder="********" required autocomplete="new-password">
+                        <div style="position:relative;">
+                            <input id="reg_password" class="auth-input" type="password" name="password" placeholder="********" required autocomplete="new-password">
+                            <button type="button" class="auth-toggle" aria-label="Mostrar u ocultar contraseña" data-toggle-password="reg_password">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
                         <div style="height:.65rem"></div>
                         <label for="reg_password_confirmation">Confirmar contraseña</label>
-                        <input id="reg_password_confirmation" class="auth-input" type="password" name="password_confirmation" placeholder="********" required autocomplete="new-password">
+                        <div style="position:relative;">
+                            <input id="reg_password_confirmation" class="auth-input" type="password" name="password_confirmation" placeholder="********" required autocomplete="new-password">
+                            <button type="button" class="auth-toggle" aria-label="Mostrar u ocultar contraseña" data-toggle-password="reg_password_confirmation">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
                         <div style="height:1rem"></div>
                         <button type="submit" class="btn-auth-primary">Registrarse</button>
                     </form>
@@ -129,6 +155,30 @@
         tabLogin.addEventListener('click', showLogin);
         tabRegister.addEventListener('click', showRegister);
 
+        const hasErrors = {{ $errors->any() ? 'true' : 'false' }};
+        const likelyRegisterErrors = {{ ($errors->has('name') || $errors->has('password_confirmation')) ? 'true' : 'false' }};
+
         if (location.hash === '#register') { open(); showRegister(); }
+        else if (hasErrors) {
+            open();
+            likelyRegisterErrors ? showRegister() : showLogin();
+        }
+
+        // Mostrar/ocultar contraseña en inputs
+        document.querySelectorAll('[data-toggle-password]').forEach(btn => {
+            const target = document.getElementById(btn.dataset.togglePassword);
+            if (!target) return;
+            btn.addEventListener('click', () => {
+                const hidden = target.type === 'password';
+                target.type = hidden ? 'text' : 'password';
+
+                const icon = btn.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('fa-eye', !hidden);
+                    icon.classList.toggle('fa-eye-slash', hidden);
+                }
+                btn.setAttribute('aria-label', hidden ? 'Ocultar contraseña' : 'Mostrar contraseña');
+            });
+        });
     })();
 </script>
