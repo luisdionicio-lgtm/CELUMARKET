@@ -10,7 +10,7 @@
     <div class="mx-auto max-w-xl">
         <div class="mb-3">
             <div class="grid grid-cols-2 gap-2 rounded-full bg-slate-100 p-1">
-                <a href="{{ route('auth.embed.login', ['redirect' => request('redirect', url()->previous())]) }}" class="rounded-full px-3 py-2 text-center text-sm font-semibold text-slate-600">Iniciar sesión</a>
+                <a href="{{ route('auth.embed.login.iframe', ['redirect' => request('redirect', url()->previous())]) }}" class="rounded-full px-3 py-2 text-center text-sm font-semibold text-slate-600">Iniciar sesión</a>
                 <button class="rounded-full bg-white px-3 py-2 text-sm font-semibold shadow">Registrarse</button>
             </div>
         </div>

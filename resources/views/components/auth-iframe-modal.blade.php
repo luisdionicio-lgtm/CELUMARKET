@@ -32,8 +32,8 @@
         const iframe = document.getElementById('auth-iframe');
 
         // ✅ URLs seguras definidas en Laravel
-        const loginUrl = "{{ route('auth.embed.login') }}";
-        const registerUrl = "{{ route('auth.embed.register') }}";
+        const loginUrl = "{{ route('auth.embed.login.iframe') }}";
+        const registerUrl = "{{ route('auth.embed.register.iframe') }}";
         const bridgePath = "{{ route('auth.bridge') }}";
 
         // Abre el iframe con la vista correcta

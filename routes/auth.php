@@ -47,11 +47,11 @@ Route::middleware('guest')->group(function () {
     // Vistas embebidas para iframe (solo formularios)
     Route::get('embed/login', function (Request $request) {
         return view('auth.embed-login');
-    })->name('auth.embed.login');
+    })->name('auth.embed.login.iframe');
 
     Route::get('embed/register', function (Request $request) {
         return view('auth.embed-register');
-    })->name('auth.embed.register');
+    })->name('auth.embed.register.iframe');
 });
 
 // Rutas accesibles solo para usuarios autenticados
