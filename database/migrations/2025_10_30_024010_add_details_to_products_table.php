@@ -13,7 +13,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->float('rating')->nullable();              // Calificación del producto
             $table->string('storage')->nullable();             // Almacenamiento interno
             $table->string('ram')->nullable();                 // Memoria RAM
             $table->string('processor')->nullable();           // Procesador
@@ -33,7 +32,6 @@ return new class extends Migration
     {
         Schema::table('products', function (Blueprint $table) {
             $table->dropColumn([
-                'rating',
                 'storage',
                 'ram',
                 'processor',
@@ -46,3 +44,4 @@ return new class extends Migration
         });
     }
 };
+
