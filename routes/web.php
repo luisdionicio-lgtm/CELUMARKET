@@ -140,14 +140,6 @@ Route::middleware(['auth', 'role:tecnico,admin'])
 
 
 // ---------------------------------------------------------------------------
-// Authentication modal (iframe)
-// ---------------------------------------------------------------------------
-Route::get('/auth/embed/login', fn() => view('auth.login'))->name('auth.embed.login');
-Route::get('/auth/embed/register', fn() => view('auth.register'))->name('auth.embed.register');
-Route::get('/auth/bridge', fn() => view('auth.bridge', ['to' => request('to', '/')]))->name('auth.bridge');
-
-
-// ---------------------------------------------------------------------------
 // Auth Scaffolding
 // ---------------------------------------------------------------------------
 require __DIR__ . '/auth.php';
