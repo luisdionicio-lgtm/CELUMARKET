@@ -12,8 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->string('nombre')->nullable()->after('name');
-            $table->decimal('precio', 10, 2)->nullable()->after('price');
+            if (! Schema::hasColumn('products', 'nombre')) {
+                $table->string('nombre')->nullable()->after('name');
+            }
+
+            if (! Schema::hasColumn('products', 'precio')) {
+                $table->decimal('precio', 10, 2)->nullable()->after('price');
+            }
         });
     }
 
@@ -23,7 +28,13 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn(['nombre', 'precio']);
+            if (Schema::hasColumn('products', 'nombre')) {
+                $table->dropColumn('nombre');
+            }
+
+            if (Schema::hasColumn('products', 'precio')) {
+                $table->dropColumn('precio');
+            }
         });
     }
 };
