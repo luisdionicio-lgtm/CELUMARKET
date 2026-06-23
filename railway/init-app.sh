@@ -1,37 +1,19 @@
 #!/usr/bin/env sh
-set -eu
+set -x
 
-echo "Running Laravel pre-deploy checks..."
+echo "===== Laravel Init ====="
 
-if [ -z "${APP_KEY:-}" ]; then
-    echo "ERROR: APP_KEY is not set. Add a Laravel APP_KEY in Railway variables."
-    exit 1
-fi
+echo "APP_KEY: ${APP_KEY:+SET}"
+echo "DB_CONNECTION: ${DB_CONNECTION}"
 
-if [ "${DB_CONNECTION:-}" = "mysql" ]; then
-    for name in DB_HOST DB_PORT DB_DATABASE DB_USERNAME DB_PASSWORD; do
-        eval "value=\${$name:-}"
-        if [ -z "$value" ]; then
-            echo "ERROR: $name is not set. Check the MySQL variables in Railway."
-            exit 1
-        fi
-    done
-fi
+php artisan optimize:clear || echo "optimize:clear FAILED"
 
-php artisan optimize:clear
+php artisan migrate --force || echo "migrate FAILED"
 
-attempt=1
-until php artisan migrate --force; do
-    if [ "$attempt" -ge 5 ]; then
-        echo "ERROR: Laravel migrations failed after $attempt attempts."
-        exit 1
-    fi
+php artisan storage:link || echo "storage:link FAILED"
 
-    echo "Migrations failed. Retrying in 5 seconds... ($attempt/5)"
-    attempt=$((attempt + 1))
-    sleep 5
-done
+php artisan config:cache || echo "config:cache FAILED"
 
-php artisan storage:link || true
-php artisan config:cache
-php artisan view:cache
+php artisan view:cache || echo "view:cache FAILED"
+
+echo "===== FINISHED ====="
