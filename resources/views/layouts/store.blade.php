@@ -12,20 +12,15 @@
         CELU MARKET
     </title>
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
 
-<body class="bg-slate-100 text-slate-800 antialiased">
-
-    {{-- ESTE ES EL NAVEGADOR DE LA TIENDA (no el del panel) --}}
-    @include('layouts.store-navigation')
+<body class="@yield('body_class', 'bg-slate-100 text-slate-800 antialiased')">
 
     <main>
         @yield('content')
     </main>
-
-    {{-- Drawer del carrito --}}
-    <x-cart-drawer />
 
 </body>
 </html>

@@ -1,17 +1,9 @@
-<!DOCTYPE html>
-<html lang="es" class="scroll-smooth">
+@extends('layouts.store')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Tienda | CELU MARKET</title>
+@section('title', 'Tienda')
+@section('body_class', 'bg-slate-50 text-slate-900 antialiased')
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-
-<body class="bg-slate-50 text-slate-900 antialiased">
+@section('content')
     @php
     $productos = $products ?? collect();
     $favoriteProductIds = $favoriteProductIds ?? [];
@@ -450,5 +442,4 @@
 
 @include('components.footer')
 
-</body>
-</html>
+@endsection
