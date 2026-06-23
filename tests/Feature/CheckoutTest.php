@@ -31,7 +31,7 @@ class CheckoutTest extends TestCase
         $this->actingAs($user)
             ->get(route('checkout.show'))
             ->assertRedirect(route('cart.index'))
-            ->assertSessionHas('status', 'Tu carrito está vacío.');
+            ->assertSessionHas('status', 'Tu carrito estÃ¡ vacÃ­o.');
     }
 
     public function test_user_payment_creates_order_and_clears_cart(): void

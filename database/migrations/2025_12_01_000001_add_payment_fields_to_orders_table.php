@@ -9,20 +9,27 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->string('payment_method', 20)->default('unknown')->after('status');
-            $table->boolean('simulated')->default(false)->after('payment_method');
+            if (!Schema::hasColumn('orders', 'payment_method')) {
+                $table->string('payment_method', 20)->default('unknown')->after('status');
+            }
+
+            if (!Schema::hasColumn('orders', 'simulated')) {
+                $table->boolean('simulated')->default(false)->after('payment_method');
+            }
         });
 
-        Schema::create('order_items', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('order_id')->constrained()->onDelete('cascade');
-            $table->foreignId('product_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('product_name');
-            $table->decimal('price', 10, 2);
-            $table->unsignedInteger('quantity');
-            $table->decimal('subtotal', 10, 2);
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('order_items')) {
+            Schema::create('order_items', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('order_id')->constrained()->onDelete('cascade');
+                $table->foreignId('product_id')->nullable()->constrained()->nullOnDelete();
+                $table->string('product_name');
+                $table->decimal('price', 10, 2);
+                $table->unsignedInteger('quantity');
+                $table->decimal('subtotal', 10, 2);
+                $table->timestamps();
+            });
+        }
     }
 
     public function down(): void
@@ -30,7 +37,13 @@ return new class extends Migration
         Schema::dropIfExists('order_items');
 
         Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn(['payment_method', 'simulated']);
+            if (Schema::hasColumn('orders', 'payment_method')) {
+                $table->dropColumn('payment_method');
+            }
+
+            if (Schema::hasColumn('orders', 'simulated')) {
+                $table->dropColumn('simulated');
+            }
         });
     }
 };

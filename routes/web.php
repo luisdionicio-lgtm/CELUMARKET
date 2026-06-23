@@ -163,6 +163,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout/payment/qr', [CheckoutController::class, 'generateQrPayment'])->name('checkout.payment.qr');
     Route::get('/checkout/payment/status/{payment}', [CheckoutController::class, 'checkQrStatus'])->name('checkout.payment.status');
     Route::post('/checkout/payment/qr/confirm', [CheckoutController::class, 'confirmQrCode'])->name('checkout.payment.qr.confirm');
+    Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
 
     Route::get('/checkout/confirm', [CheckoutController::class, 'confirm'])->name('checkout.confirm');
     Route::match(['get', 'post'], '/checkout/complete', [CheckoutController::class, 'complete'])->name('checkout.complete');

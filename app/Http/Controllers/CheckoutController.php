@@ -31,7 +31,7 @@ class CheckoutController extends Controller
 
         if ($items->isEmpty()) {
             return redirect()->route('cart.index')
-                ->with('status', 'Tu carrito esta vacio.');
+                ->with('status', 'Tu carrito está vacío.');
         }
 
         $totals = $this->cartService->totals($items);
@@ -49,7 +49,7 @@ class CheckoutController extends Controller
 
         if ($items->isEmpty()) {
             return redirect()->route('cart.index')
-                ->with('status', 'Tu carrito esta vacio.');
+                ->with('status', 'Tu carrito está vacío.');
         }
 
         $shipping = session('checkout.shipping', []);
@@ -206,7 +206,7 @@ class CheckoutController extends Controller
 
         if ($items->isEmpty()) {
             return redirect()->route('cart.index')
-                ->with('status', 'Tu carrito esta vacio.');
+                ->with('status', 'Tu carrito está vacío.');
         }
 
         $shipping = session('checkout.shipping');
@@ -252,7 +252,7 @@ class CheckoutController extends Controller
 
         if ($items->isEmpty()) {
             return redirect()->route('cart.index')
-                ->with('status', 'Tu carrito esta vacio.');
+                ->with('status', 'Tu carrito está vacío.');
         }
 
         $totals = $this->cartService->totals($items);
@@ -261,5 +261,31 @@ class CheckoutController extends Controller
         session()->forget(['checkout.shipping', 'checkout.payment', 'checkout.order_id']);
 
         return view('checkout.complete', compact('items', 'totals', 'shipping', 'payment'));
+    }
+
+    /**
+     * Compatibility endpoint for the single-step checkout flow.
+     */
+    public function process(Request $request)
+    {
+        $data = $request->validate([
+            'method' => ['required', 'in:card,cash,yape,plin'],
+            'card_number' => ['nullable', 'string', 'max:30'],
+            'expiry' => ['nullable', 'string', 'max:10'],
+            'cvv' => ['nullable', 'string', 'max:10'],
+        ]);
+
+        $user = $request->user();
+        $items = $this->cartService->getItems($user);
+
+        if ($items->isEmpty()) {
+            return redirect()->route('cart.index')
+                ->with('status', 'Tu carrito está vacío.');
+        }
+
+        $this->paymentService->process($user, $items, $data);
+
+        return redirect()->route('cart.index')
+            ->with('status', 'Pago procesado correctamente.');
     }
 }

@@ -161,7 +161,13 @@ class CartService
 
     protected function resolvePrice(Product $product): float
     {
-        return (float) ($product->precio ?? $product->price ?? 0);
+        $precio = $product->precio;
+
+        if ($precio !== null && (float) $precio > 0) {
+            return (float) $precio;
+        }
+
+        return (float) ($product->price ?? 0);
     }
 
     /**
