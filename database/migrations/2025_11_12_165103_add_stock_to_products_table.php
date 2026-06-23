@@ -9,17 +9,21 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-public function up(): void
-{
-    Schema::table('products', function (Blueprint $table) {
-        $table->integer('stock')->default(0)->after('price');
-    });
-}
+    public function up(): void
+    {
+        Schema::table('products', function (Blueprint $table) {
+            if (! Schema::hasColumn('products', 'stock')) {
+                $table->integer('stock')->default(0)->after('price');
+            }
+        });
+    }
 
-public function down(): void
-{
-    Schema::table('products', function (Blueprint $table) {
-        $table->dropColumn('stock');
-    });
-}
+    public function down(): void
+    {
+        Schema::table('products', function (Blueprint $table) {
+            if (Schema::hasColumn('products', 'stock')) {
+                $table->dropColumn('stock');
+            }
+        });
+    }
 };
