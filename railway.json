@@ -6,7 +6,7 @@
   },
   "deploy": {
     "preDeployCommand": "sh ./railway/init-app.sh",
-    "startCommand": "php -S 0.0.0.0:${PORT} -t public",
+    "startCommand": "php artisan serve --host=0.0.0.0 --port=${PORT}",
     "healthcheckPath": "/up",
     "healthcheckTimeout": 300
   }
